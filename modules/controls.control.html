@@ -33,6 +33,7 @@
 <h2>Contents</h2>
 <ul>
 <li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
 </ul>
 
 
@@ -43,7 +44,16 @@
   <li><a href="../modules/controls.colorbars.html">colorbars</a></li>
   <li><a href="../modules/controls.combobox.html">combobox</a></li>
   <li><strong>control</strong></li>
+  <li><a href="../modules/controls.editbox.html">editbox</a></li>
+  <li><a href="../modules/controls.font.html">font</a></li>
+  <li><a href="../modules/controls.grid.html">grid</a></li>
+  <li><a href="../modules/controls.image.html">image</a></li>
+  <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
+  <li><a href="../modules/controls.label.html">label</a></li>
+  <li><a href="../modules/controls.layoutpanel.html">layoutpanel</a></li>
+  <li><a href="../modules/controls.line.html">line</a></li>
   <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
+  <li><a href="../modules/controls.object.html">object</a></li>
   <li><a href="../modules/headers.autolocalizer.html">autolocalizer</a></li>
 </ul>
 
@@ -59,10 +69,6 @@
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#Control:New">Control:New (padding, borderThickness, borderColor, borderColor2, backgroundColor, focusColor, autosize, draggable, resizable, minWidth, minHeight, maxWidth, maxHeight, OnResize)</a></td>
-	<td class="summary">Control fields.</td>
-	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#Control:Dispose">Control:Dispose (...)</a></td>
 	<td class="summary">Removes the control.</td>
@@ -100,6 +106,13 @@
 	<td class="summary">Requests a redraw of the control.</td>
 	</tr>
 </table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Control">Control</a></td>
+	<td class="summary">Control fields.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
@@ -107,77 +120,6 @@
 
     <h2><a name="Functions"></a>Functions</h2>
     <dl class="function">
-    <dt>
-    <a name = "Control:New"></a>
-    <strong>Control:New (padding, borderThickness, borderColor, borderColor2, backgroundColor, focusColor, autosize, draggable, resizable, minWidth, minHeight, maxWidth, maxHeight, OnResize)</strong>
-    </dt>
-    <dd>
-    Control fields.
-
- Inherits from Object.
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">padding</span>
-         table of padding {left,right,top,bottom}, default: {5,5,5,5}
-        </li>
-        <li><span class="parameter">borderThickness</span>
-         border thickness in pixels, default: 1.5
-        </li>
-        <li><span class="parameter">borderColor</span>
-         border color table {r,g,b,a}, default: {1,1,1,0.6}
-        </li>
-        <li><span class="parameter">borderColor2</span>
-         border color second table {r,g,b,a}, default: {0,0,0,0.8}
-        </li>
-        <li><span class="parameter">backgroundColor</span>
-         background color table {r,g,b,a}, default: {0.8,0.8,1,0.4}
-        </li>
-        <li><span class="parameter">focusColor</span>
-         focus color table {r,g,b,a}, default: {0.2,0.2,1,0.6}
-        </li>
-        <li><span class="parameter">autosize</span>
-            <span class="types"><span class="type">bool</span></span>
-         whether size will be determined automatically, default: false
-        </li>
-        <li><span class="parameter">draggable</span>
-            <span class="types"><span class="type">bool</span></span>
-         can control be dragged, default: false
-        </li>
-        <li><span class="parameter">resizable</span>
-            <span class="types"><span class="type">bool</span></span>
-         can control be resized, default: false
-        </li>
-        <li><span class="parameter">minWidth</span>
-            <span class="types"><span class="type">int</span></span>
-         minimum width, default: 10
-        </li>
-        <li><span class="parameter">minHeight</span>
-            <span class="types"><span class="type">int</span></span>
-         minimum height, default: 10
-        </li>
-        <li><span class="parameter">maxWidth</span>
-            <span class="types"><span class="type">int</span></span>
-         maximum width, default: 1e9
-        </li>
-        <li><span class="parameter">maxHeight</span>
-            <span class="types"><span class="type">int</span></span>
-         maximum height, default: 1e9
-        </li>
-        <li><span class="parameter">OnResize</span>
-         table of function listeners for size changes
-        </li>
-    </ul>
-
-
-
-    <h3>See also:</h3>
-    <ul>
-    </ul>
-
-
-</dd>
     <dt>
     <a name = "Control:Dispose"></a>
     <strong>Control:Dispose (...)</strong>
@@ -207,6 +149,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">obj</span>
+            <span class="types"><a class="type" href="../modules/controls.object.html#Object">object.Object</a></span>
          parent object
         </li>
     </ul>
@@ -226,6 +169,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">obj</span>
+            <span class="types"><a class="type" href="../modules/controls.object.html#Object">object.Object</a></span>
          child object
         </li>
         <li><span class="parameter">dontUpdate</span>
@@ -248,6 +192,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">obj</span>
+            <span class="types"><a class="type" href="../modules/controls.object.html#Object">object.Object</a></span>
          child object
         </li>
     </ul>
@@ -389,6 +334,96 @@
 
 
 
+
+
+</dd>
+</dl>
+    <h2><a name="Tables"></a>Tables</h2>
+    <dl class="function">
+    <dt>
+    <a name = "Control"></a>
+    <strong>Control</strong>
+    </dt>
+    <dd>
+    Control fields.
+
+ Inherits from Object.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">padding</span>
+            <span class="types"><span class="type">{left,top,right,bottom}</span></span>
+         table of padding, (default {5,5,5,5})
+        </li>
+        <li><span class="parameter">borderThickness</span>
+            <span class="types"><span class="type">number</span></span>
+         border thickness in pixels
+         (<em>default</em> 1.5)
+        </li>
+        <li><span class="parameter">borderColor</span>
+            <span class="types"><span class="type">{r,g,b,a}</span></span>
+         border color {r,g,b,a}, (default {1,1,1,0.6})
+        </li>
+        <li><span class="parameter">borderColor2</span>
+            <span class="types"><span class="type">{r,g,b,a}</span></span>
+         border color second {r,g,b,a}, (default {0,0,0,0.8})
+        </li>
+        <li><span class="parameter">backgroundColor</span>
+            <span class="types"><span class="type">{r,g,b,a}</span></span>
+         background color {r,g,b,a}, (default {0.8,0.8,1,0.4})
+        </li>
+        <li><span class="parameter">focusColor</span>
+            <span class="types"><span class="type">{r,g,b,a}</span></span>
+         focus color {r,g,b,a}, (default {0.2,0.2,1,0.6})
+        </li>
+        <li><span class="parameter">autosize</span>
+            <span class="types"><span class="type">bool</span></span>
+         whether size will be determined automatically
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">draggable</span>
+            <span class="types"><span class="type">bool</span></span>
+         can control be dragged
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">resizable</span>
+            <span class="types"><span class="type">bool</span></span>
+         can control be resized
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">minWidth</span>
+            <span class="types"><span class="type">int</span></span>
+         minimum width
+         (<em>default</em> 10)
+        </li>
+        <li><span class="parameter">minHeight</span>
+            <span class="types"><span class="type">int</span></span>
+         minimum height
+         (<em>default</em> 10)
+        </li>
+        <li><span class="parameter">maxWidth</span>
+            <span class="types"><span class="type">int</span></span>
+         maximum width
+         (<em>default</em> 1e9)
+        </li>
+        <li><span class="parameter">maxHeight</span>
+            <span class="types"><span class="type">int</span></span>
+         maximum height
+         (<em>default</em> 1e9)
+        </li>
+        <li><span class="parameter">OnResize</span>
+            <span class="types"><span class="type">{func1,fun2,...}</span></span>
+         table of function listeners for size changes, (default {})
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/controls.object.html#Object">object.Object</a>
+    </ul>
 
 
 </dd>

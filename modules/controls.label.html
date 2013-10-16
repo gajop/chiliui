@@ -40,7 +40,7 @@
 <h2>Modules</h2>
 <ul class="nowrap">
   <li><a href="../modules/controls.button.html">button</a></li>
-  <li><strong>checkbox</strong></li>
+  <li><a href="../modules/controls.checkbox.html">checkbox</a></li>
   <li><a href="../modules/controls.colorbars.html">colorbars</a></li>
   <li><a href="../modules/controls.combobox.html">combobox</a></li>
   <li><a href="../modules/controls.control.html">control</a></li>
@@ -49,7 +49,7 @@
   <li><a href="../modules/controls.grid.html">grid</a></li>
   <li><a href="../modules/controls.image.html">image</a></li>
   <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
-  <li><a href="../modules/controls.label.html">label</a></li>
+  <li><strong>label</strong></li>
   <li><a href="../modules/controls.layoutpanel.html">layoutpanel</a></li>
   <li><a href="../modules/controls.line.html">line</a></li>
   <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
@@ -61,24 +61,24 @@
 
 <div id="content">
 
-<h1>Module <code>controls.checkbox</code></h1>
+<h1>Module <code>controls.label</code></h1>
 
-<p>Checkbox module</p>
+<p>Label module</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Checkbox:Toggle">Checkbox:Toggle ()</a></td>
-	<td class="summary">Toggles the checked state</td>
+	<td class="name" nowrap><a href="#Label:SetCaption">Label:SetCaption (newcaption)</a></td>
+	<td class="summary">Set the label caption</td>
 	</tr>
 </table>
 <h2><a href="#Tables">Tables</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Checkbox">Checkbox</a></td>
-	<td class="summary">Checkbox fields.</td>
+	<td class="name" nowrap><a href="#Label">Label</a></td>
+	<td class="summary">Label fields.</td>
 	</tr>
 </table>
 
@@ -89,12 +89,19 @@
     <h2><a name="Functions"></a>Functions</h2>
     <dl class="function">
     <dt>
-    <a name = "Checkbox:Toggle"></a>
-    <strong>Checkbox:Toggle ()</strong>
+    <a name = "Label:SetCaption"></a>
+    <strong>Label:SetCaption (newcaption)</strong>
     </dt>
     <dd>
-    Toggles the checked state
+    Set the label caption
 
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">newcaption</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         new caption to be set
+        </li>
+    </ul>
 
 
 
@@ -105,49 +112,31 @@
     <h2><a name="Tables"></a>Tables</h2>
     <dl class="function">
     <dt>
-    <a name = "Checkbox"></a>
-    <strong>Checkbox</strong>
+    <a name = "Label"></a>
+    <strong>Label</strong>
     </dt>
     <dd>
-    Checkbox fields.
+    Label fields.
 
  Inherits from Control.
 
 
     <h3>Fields:</h3>
     <ul>
-        <li><span class="parameter">checked</span>
-            <span class="types"><span class="type">bool</span></span>
-         checkbox checked state
-         (<em>default</em> true)
+        <li><span class="parameter">align</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         alignment
+         (<em>default</em> "left")
+        </li>
+        <li><span class="parameter">valign</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         vertical alignment
+         (<em>default</em> "linecenter")
         </li>
         <li><span class="parameter">caption</span>
             <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         caption to appear in the checkbox
-         (<em>default</em> "text")
-        </li>
-        <li><span class="parameter">textalign</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         text alignment
-         (<em>default</em> "left")
-        </li>
-        <li><span class="parameter">boxalign</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         box alignment
-         (<em>default</em> "right")
-        </li>
-        <li><span class="parameter">boxsize</span>
-            <span class="types"><span class="type">int</span></span>
-         box size
-         (<em>default</em> 10)
-        </li>
-        <li><span class="parameter">textColor</span>
-            <span class="types"><span class="type">{r,g,b,a}</span></span>
-         text color, (default {0,0,0,1})
-        </li>
-        <li><span class="parameter">OnChange</span>
-            <span class="types"><span class="type">{func1,func2,...}</span></span>
-         listener functions for checked state changes, (default {})
+         text to be displayed
+         (<em>default</em> "no text")
         </li>
     </ul>
 

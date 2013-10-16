@@ -33,6 +33,7 @@
 <h2>Contents</h2>
 <ul>
 <li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
 </ul>
 
 
@@ -43,7 +44,16 @@
   <li><a href="../modules/controls.colorbars.html">colorbars</a></li>
   <li><a href="../modules/controls.combobox.html">combobox</a></li>
   <li><a href="../modules/controls.control.html">control</a></li>
+  <li><a href="../modules/controls.editbox.html">editbox</a></li>
+  <li><a href="../modules/controls.font.html">font</a></li>
+  <li><a href="../modules/controls.grid.html">grid</a></li>
+  <li><a href="../modules/controls.image.html">image</a></li>
+  <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
+  <li><a href="../modules/controls.label.html">label</a></li>
+  <li><a href="../modules/controls.layoutpanel.html">layoutpanel</a></li>
+  <li><a href="../modules/controls.line.html">line</a></li>
   <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
+  <li><a href="../modules/controls.object.html">object</a></li>
   <li><a href="../modules/headers.autolocalizer.html">autolocalizer</a></li>
 </ul>
 
@@ -60,12 +70,15 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Button:New">Button:New (caption)</a></td>
-	<td class="summary">Button fields.</td>
-	</tr>
-	<tr>
 	<td class="name" nowrap><a href="#Button:SetCaption">Button:SetCaption (caption)</a></td>
 	<td class="summary">Sets the caption of the button</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Button">Button</a></td>
+	<td class="summary">Button fields.</td>
 	</tr>
 </table>
 
@@ -75,33 +88,6 @@
 
     <h2><a name="Functions"></a>Functions</h2>
     <dl class="function">
-    <dt>
-    <a name = "Button:New"></a>
-    <strong>Button:New (caption)</strong>
-    </dt>
-    <dd>
-    Button fields.
-
- Inherits from Control.
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">caption</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         caption to be displayed, default: "text"
-        </li>
-    </ul>
-
-
-
-    <h3>See also:</h3>
-    <ul>
-         <a href="../modules/controls.control.html#Control:New">control.Control:New</a>
-    </ul>
-
-
-</dd>
     <dt>
     <a name = "Button:SetCaption"></a>
     <strong>Button:SetCaption (caption)</strong>
@@ -119,6 +105,37 @@
 
 
 
+
+
+</dd>
+</dl>
+    <h2><a name="Tables"></a>Tables</h2>
+    <dl class="function">
+    <dt>
+    <a name = "Button"></a>
+    <strong>Button</strong>
+    </dt>
+    <dd>
+    Button fields.
+
+ Inherits from Control.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">caption</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         caption to be displayed
+         (<em>default</em> "button")
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/controls.control.html#Control">control.Control</a>
+    </ul>
 
 
 </dd>

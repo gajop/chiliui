@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/controls.button.html">button</a></li>
+  <li><a href="../modules/controls.checkbox.html">checkbox</a></li>
+  <li><a href="../modules/controls.colorbars.html">colorbars</a></li>
+  <li><a href="../modules/controls.combobox.html">combobox</a></li>
+  <li><a href="../modules/controls.control.html">control</a></li>
+  <li><a href="../modules/controls.editbox.html">editbox</a></li>
+  <li><a href="../modules/controls.font.html">font</a></li>
+  <li><a href="../modules/controls.grid.html">grid</a></li>
+  <li><a href="../modules/controls.image.html">image</a></li>
+  <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
+  <li><a href="../modules/controls.label.html">label</a></li>
+  <li><strong>layoutpanel</strong></li>
+  <li><a href="../modules/controls.line.html">line</a></li>
+  <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
+  <li><a href="../modules/controls.object.html">object</a></li>
+  <li><a href="../modules/headers.autolocalizer.html">autolocalizer</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>controls.layoutpanel</code></h1>
+
+<p>LayoutPanel module</p>
+<p></p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#LayoutPanel:SetOrientation">LayoutPanel:SetOrientation (orientation)</a></td>
+	<td class="summary">Set the panel's orientation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LayoutPanel:ToggleItem">LayoutPanel:ToggleItem (itemIdx)</a></td>
+	<td class="summary">Toggle item selection</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LayoutPanel:SelectItem">LayoutPanel:SelectItem (itemIdx, append)</a></td>
+	<td class="summary">Select the item</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LayoutPanel:DeselectItem">LayoutPanel:DeselectItem (itemIdx)</a></td>
+	<td class="summary">Deselect item</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LayoutPanel:SelectAll">LayoutPanel:SelectAll ()</a></td>
+	<td class="summary">Select all items</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LayoutPanel:DeselectAll">LayoutPanel:DeselectAll ()</a></td>
+	<td class="summary">Deselect all items</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#LayoutPanel">LayoutPanel</a></td>
+	<td class="summary">LayoutPanel fields.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "LayoutPanel:SetOrientation"></a>
+    <strong>LayoutPanel:SetOrientation (orientation)</strong>
+    </dt>
+    <dd>
+    Set the panel's orientation
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">orientation</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         new orientation
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LayoutPanel:ToggleItem"></a>
+    <strong>LayoutPanel:ToggleItem (itemIdx)</strong>
+    </dt>
+    <dd>
+    Toggle item selection
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">itemIdx</span>
+            <span class="types"><span class="type">int</span></span>
+         id of the item for which the selection will be toggled
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LayoutPanel:SelectItem"></a>
+    <strong>LayoutPanel:SelectItem (itemIdx, append)</strong>
+    </dt>
+    <dd>
+    Select the item
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">itemIdx</span>
+            <span class="types"><span class="type">int</span></span>
+         id of the item to be selected
+        </li>
+        <li><span class="parameter">append</span>
+            <span class="types"><span class="type">bool</span></span>
+         whether the old selection should be kept
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LayoutPanel:DeselectItem"></a>
+    <strong>LayoutPanel:DeselectItem (itemIdx)</strong>
+    </dt>
+    <dd>
+    Deselect item
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">itemIdx</span>
+            <span class="types"><span class="type">int</span></span>
+         id of the item to deselect
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LayoutPanel:SelectAll"></a>
+    <strong>LayoutPanel:SelectAll ()</strong>
+    </dt>
+    <dd>
+    Select all items
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LayoutPanel:DeselectAll"></a>
+    <strong>LayoutPanel:DeselectAll ()</strong>
+    </dt>
+    <dd>
+    Deselect all items
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Tables"></a>Tables</h2>
+    <dl class="function">
+    <dt>
+    <a name = "LayoutPanel"></a>
+    <strong>LayoutPanel</strong>
+    </dt>
+    <dd>
+    LayoutPanel fields.
+
+ Inherits from Control.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">itemPadding</span>
+            <span class="types"><span class="type">{left,top,right,bottom}</span></span>
+         table of item padding, (default {5,5,5,5})
+        </li>
+        <li><span class="parameter">itemMargin</span>
+            <span class="types"><span class="type">{left,top,right,bottom}</span></span>
+         table of item margin, (default {5,5,5,5})
+        </li>
+        <li><span class="parameter">minWidth</span>
+            <span class="types"><span class="type">int</span></span>
+         minimum item width
+         (<em>default</em> 1)
+        </li>
+        <li><span class="parameter">maxWidth</span>
+            <span class="types"><span class="type">int</span></span>
+         maximum item width
+         (<em>default</em> 0)
+        </li>
+        <li><span class="parameter">minHeight</span>
+            <span class="types"><span class="type">int</span></span>
+         minimum item height
+         (<em>default</em> 1)
+        </li>
+        <li><span class="parameter">maxHeight</span>
+            <span class="types"><span class="type">int</span></span>
+         maximum item height
+         (<em>default</em> 0)
+        </li>
+        <li><span class="parameter">orientation</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         orientation of the items
+         (<em>default</em> "horizontal)
+        </li>
+        <li><span class="parameter">resizeItems</span>
+            <span class="types"><span class="type">bool</span></span>
+         items are resized
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">centerItems</span>
+            <span class="types"><span class="type">bool</span></span>
+         items are centered
+         (<em>default</em> true)
+        </li>
+        <li><span class="parameter">selectable</span>
+            <span class="types"><span class="type">bool</span></span>
+         items can be selected
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">multiSelect</span>
+            <span class="types"><span class="type">bool</span></span>
+         multiple items can be selected
+        </li>
+        <li><span class="parameter">OnSelectItem</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+         function listeners to be called on item selection change (default {})
+        </li>
+        <li><span class="parameter">OnDrawItem</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+         function listeners to be called when an item is drawn (default {})
+        </li>
+        <li><span class="parameter">OnDblClickItem</span>
+            <span class="types"><span class="type">(func1,func2,...}</span></span>
+         function listeners to be called on double click (default {})
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/controls.control.html#Control">control.Control</a>
+    </ul>
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.0</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

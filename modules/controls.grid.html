@@ -32,7 +32,6 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Functions">Functions</a></li>
 <li><a href="#Tables">Tables</a></li>
 </ul>
 
@@ -42,11 +41,11 @@
   <li><a href="../modules/controls.button.html">button</a></li>
   <li><a href="../modules/controls.checkbox.html">checkbox</a></li>
   <li><a href="../modules/controls.colorbars.html">colorbars</a></li>
-  <li><strong>combobox</strong></li>
+  <li><a href="../modules/controls.combobox.html">combobox</a></li>
   <li><a href="../modules/controls.control.html">control</a></li>
   <li><a href="../modules/controls.editbox.html">editbox</a></li>
   <li><a href="../modules/controls.font.html">font</a></li>
-  <li><a href="../modules/controls.grid.html">grid</a></li>
+  <li><strong>grid</strong></li>
   <li><a href="../modules/controls.image.html">image</a></li>
   <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
   <li><a href="../modules/controls.label.html">label</a></li>
@@ -61,24 +60,17 @@
 
 <div id="content">
 
-<h1>Module <code>controls.combobox</code></h1>
+<h1>Module <code>controls.grid</code></h1>
 
-<p>ComboBox module</p>
+<p>Grid module</p>
 <p></p>
 
 
-<h2><a href="#Functions">Functions</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#ComboBox:Select">ComboBox:Select (itemIdx)</a></td>
-	<td class="summary">Selects an item by id</td>
-	</tr>
-</table>
 <h2><a href="#Tables">Tables</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#ComboBox">ComboBox</a></td>
-	<td class="summary">ComboBox fields.</td>
+	<td class="name" nowrap><a href="#Grid">Grid</a></td>
+	<td class="summary">Grid fields.</td>
 	</tr>
 </table>
 
@@ -86,61 +78,24 @@
 <br/>
 
 
-    <h2><a name="Functions"></a>Functions</h2>
-    <dl class="function">
-    <dt>
-    <a name = "ComboBox:Select"></a>
-    <strong>ComboBox:Select (itemIdx)</strong>
-    </dt>
-    <dd>
-    Selects an item by id
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">itemIdx</span>
-            <span class="types"><span class="type">int</span></span>
-         id of the item to be selected
-        </li>
-    </ul>
-
-
-
-
-
-</dd>
-</dl>
     <h2><a name="Tables"></a>Tables</h2>
     <dl class="function">
     <dt>
-    <a name = "ComboBox"></a>
-    <strong>ComboBox</strong>
+    <a name = "Grid"></a>
+    <strong>Grid</strong>
     </dt>
     <dd>
-    ComboBox fields.
- Inherits from Control.
+    Grid fields.
 
-    <h3>Fields:</h3>
-    <ul>
-        <li><span class="parameter">items</span>
-            <span class="types"><span class="type">{"item1","item2",...}</span></span>
-         table of items in the ComboBox, (default {"items"})
-        </li>
-        <li><span class="parameter">selected</span>
-            <span class="types"><span class="type">int</span></span>
-         id of the selected item
-         (<em>default</em> 1)
-        </li>
-        <li><span class="parameter">OnSelect</span>
-            <span class="types"><span class="type">{func1,func2,...}</span></span>
-         listener functions for selected item changes, (default {})
-        </li>
-    </ul>
+ Inherits from LayoutPanel.
+
+
 
 
 
     <h3>See also:</h3>
     <ul>
-         <a href="../modules/controls.control.html#Control">control.Control</a>
+         <a href="../modules/controls.layoutpanel.html#LayoutPanel">layoutpanel.LayoutPanel</a>
     </ul>
 
 

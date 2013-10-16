@@ -33,6 +33,7 @@
 <h2>Contents</h2>
 <ul>
 <li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
 </ul>
 
 
@@ -43,7 +44,16 @@
   <li><strong>colorbars</strong></li>
   <li><a href="../modules/controls.combobox.html">combobox</a></li>
   <li><a href="../modules/controls.control.html">control</a></li>
+  <li><a href="../modules/controls.editbox.html">editbox</a></li>
+  <li><a href="../modules/controls.font.html">font</a></li>
+  <li><a href="../modules/controls.grid.html">grid</a></li>
+  <li><a href="../modules/controls.image.html">image</a></li>
+  <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
+  <li><a href="../modules/controls.label.html">label</a></li>
+  <li><a href="../modules/controls.layoutpanel.html">layoutpanel</a></li>
+  <li><a href="../modules/controls.line.html">line</a></li>
   <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
+  <li><a href="../modules/controls.object.html">object</a></li>
   <li><a href="../modules/headers.autolocalizer.html">autolocalizer</a></li>
 </ul>
 
@@ -60,12 +70,15 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Colorbars:New">Colorbars:New (color, OnChange)</a></td>
-	<td class="summary">Colorbar fields.</td>
-	</tr>
-	<tr>
 	<td class="name" nowrap><a href="#Colorbars:SetColor">Colorbars:SetColor (c)</a></td>
 	<td class="summary">Sets the new color</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Colorbars">Colorbars</a></td>
+	<td class="summary">Colorbar fields.</td>
 	</tr>
 </table>
 
@@ -76,35 +89,6 @@
     <h2><a name="Functions"></a>Functions</h2>
     <dl class="function">
     <dt>
-    <a name = "Colorbars:New"></a>
-    <strong>Colorbars:New (color, OnChange)</strong>
-    </dt>
-    <dd>
-    Colorbar fields.
-
- Inherits from Control.
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">color</span>
-         color table {r,g,b,a}, default: {1,1,1,1}
-        </li>
-        <li><span class="parameter">OnChange</span>
-         listener functions for color changes
-        </li>
-    </ul>
-
-
-
-    <h3>See also:</h3>
-    <ul>
-         <a href="../modules/controls.control.html#Control:New">control.Control:New</a>
-    </ul>
-
-
-</dd>
-    <dt>
     <a name = "Colorbars:SetColor"></a>
     <strong>Colorbars:SetColor (c)</strong>
     </dt>
@@ -114,12 +98,47 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">c</span>
-         color table {r,g,b,a}
+            <span class="types"><span class="type">{r,g,b,a}</span></span>
+         color table
         </li>
     </ul>
 
 
 
+
+
+</dd>
+</dl>
+    <h2><a name="Tables"></a>Tables</h2>
+    <dl class="function">
+    <dt>
+    <a name = "Colorbars"></a>
+    <strong>Colorbars</strong>
+    </dt>
+    <dd>
+    Colorbar fields.
+
+ Inherits from Control.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">color</span>
+            <span class="types"><span class="type">{r,g,b,a}</span></span>
+         color table, (default {1,1,1,1})
+        </li>
+        <li><span class="parameter">OnChange</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+         listener functions for color changes, (default {})
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/controls.control.html#Control">control.Control</a>
+    </ul>
 
 
 </dd>

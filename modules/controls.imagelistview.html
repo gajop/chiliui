@@ -32,7 +32,6 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Functions">Functions</a></li>
 <li><a href="#Tables">Tables</a></li>
 </ul>
 
@@ -40,7 +39,7 @@
 <h2>Modules</h2>
 <ul class="nowrap">
   <li><a href="../modules/controls.button.html">button</a></li>
-  <li><strong>checkbox</strong></li>
+  <li><a href="../modules/controls.checkbox.html">checkbox</a></li>
   <li><a href="../modules/controls.colorbars.html">colorbars</a></li>
   <li><a href="../modules/controls.combobox.html">combobox</a></li>
   <li><a href="../modules/controls.control.html">control</a></li>
@@ -48,7 +47,7 @@
   <li><a href="../modules/controls.font.html">font</a></li>
   <li><a href="../modules/controls.grid.html">grid</a></li>
   <li><a href="../modules/controls.image.html">image</a></li>
-  <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
+  <li><strong>imagelistview</strong></li>
   <li><a href="../modules/controls.label.html">label</a></li>
   <li><a href="../modules/controls.layoutpanel.html">layoutpanel</a></li>
   <li><a href="../modules/controls.line.html">line</a></li>
@@ -61,24 +60,17 @@
 
 <div id="content">
 
-<h1>Module <code>controls.checkbox</code></h1>
+<h1>Module <code>controls.imagelistview</code></h1>
 
-<p>Checkbox module</p>
+<p>ImageListView module</p>
 <p></p>
 
 
-<h2><a href="#Functions">Functions</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#Checkbox:Toggle">Checkbox:Toggle ()</a></td>
-	<td class="summary">Toggles the checked state</td>
-	</tr>
-</table>
 <h2><a href="#Tables">Tables</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Checkbox">Checkbox</a></td>
-	<td class="summary">Checkbox fields.</td>
+	<td class="name" nowrap><a href="#ImageListView">ImageListView</a></td>
+	<td class="summary">ImageListView fields.</td>
 	</tr>
 </table>
 
@@ -86,68 +78,28 @@
 <br/>
 
 
-    <h2><a name="Functions"></a>Functions</h2>
-    <dl class="function">
-    <dt>
-    <a name = "Checkbox:Toggle"></a>
-    <strong>Checkbox:Toggle ()</strong>
-    </dt>
-    <dd>
-    Toggles the checked state
-
-
-
-
-
-
-</dd>
-</dl>
     <h2><a name="Tables"></a>Tables</h2>
     <dl class="function">
     <dt>
-    <a name = "Checkbox"></a>
-    <strong>Checkbox</strong>
+    <a name = "ImageListView"></a>
+    <strong>ImageListView</strong>
     </dt>
     <dd>
-    Checkbox fields.
+    ImageListView fields.
 
- Inherits from Control.
+ Inherits from LayoutPanel.
 
 
     <h3>Fields:</h3>
     <ul>
-        <li><span class="parameter">checked</span>
-            <span class="types"><span class="type">bool</span></span>
-         checkbox checked state
-         (<em>default</em> true)
-        </li>
-        <li><span class="parameter">caption</span>
+        <li><span class="parameter">dir</span>
             <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         caption to appear in the checkbox
-         (<em>default</em> "text")
+         initial directory
+         (<em>default</em> "")
         </li>
-        <li><span class="parameter">textalign</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         text alignment
-         (<em>default</em> "left")
-        </li>
-        <li><span class="parameter">boxalign</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         box alignment
-         (<em>default</em> "right")
-        </li>
-        <li><span class="parameter">boxsize</span>
-            <span class="types"><span class="type">int</span></span>
-         box size
-         (<em>default</em> 10)
-        </li>
-        <li><span class="parameter">textColor</span>
-            <span class="types"><span class="type">{r,g,b,a}</span></span>
-         text color, (default {0,0,0,1})
-        </li>
-        <li><span class="parameter">OnChange</span>
+        <li><span class="parameter">OnDirChange</span>
             <span class="types"><span class="type">{func1,func2,...}</span></span>
-         listener functions for checked state changes, (default {})
+         table of function listeners for directory change (default {})
         </li>
     </ul>
 
@@ -155,7 +107,7 @@
 
     <h3>See also:</h3>
     <ul>
-         <a href="../modules/controls.control.html#Control">control.Control</a>
+         <a href="../modules/controls.layoutpanel.html#LayoutPanel">layoutpanel.LayoutPanel</a>
     </ul>
 
 
