@@ -1,0 +1,405 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/controls.button.html">button</a></li>
+  <li><a href="../modules/controls.checkbox.html">checkbox</a></li>
+  <li><a href="../modules/controls.colorbars.html">colorbars</a></li>
+  <li><a href="../modules/controls.combobox.html">combobox</a></li>
+  <li><strong>control</strong></li>
+  <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
+  <li><a href="../modules/headers.autolocalizer.html">autolocalizer</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>controls.control</code></h1>
+
+<p>Control module</p>
+<p></p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Control:New">Control:New (padding, borderThickness, borderColor, borderColor2, backgroundColor, focusColor, autosize, draggable, resizable, minWidth, minHeight, maxWidth, maxHeight, OnResize)</a></td>
+	<td class="summary">Control fields.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Control:Dispose">Control:Dispose (...)</a></td>
+	<td class="summary">Removes the control.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Control:SetParent">Control:SetParent (obj)</a></td>
+	<td class="summary">Sets the control's parent object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Control:AddChild">Control:AddChild (obj, dontUpdate)</a></td>
+	<td class="summary">Adds a child object to the control</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Control:RemoveChild">Control:RemoveChild (obj)</a></td>
+	<td class="summary">Removes a child object from the control</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Control:SetPos">Control:SetPos (x, y, w, h, clientArea, dontUpdateRelative)</a></td>
+	<td class="summary">Sets the control's position</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Control:SetPosRelative">Control:SetPosRelative (x, y, w, h, clientArea, dontUpdateRelative)</a></td>
+	<td class="summary">Sets the control's relative position</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Control:Resize">Control:Resize (w, h, clientArea, dontUpdateRelative)</a></td>
+	<td class="summary">Resize the control</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Control:Invalidate">Control:Invalidate ()</a></td>
+	<td class="summary">Requests a redraw of the control.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Control:InvalidateSelf">Control:InvalidateSelf ()</a></td>
+	<td class="summary">Requests a redraw of the control.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "Control:New"></a>
+    <strong>Control:New (padding, borderThickness, borderColor, borderColor2, backgroundColor, focusColor, autosize, draggable, resizable, minWidth, minHeight, maxWidth, maxHeight, OnResize)</strong>
+    </dt>
+    <dd>
+    Control fields.
+
+ Inherits from Object.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">padding</span>
+         table of padding {left,right,top,bottom}, default: {5,5,5,5}
+        </li>
+        <li><span class="parameter">borderThickness</span>
+         border thickness in pixels, default: 1.5
+        </li>
+        <li><span class="parameter">borderColor</span>
+         border color table {r,g,b,a}, default: {1,1,1,0.6}
+        </li>
+        <li><span class="parameter">borderColor2</span>
+         border color second table {r,g,b,a}, default: {0,0,0,0.8}
+        </li>
+        <li><span class="parameter">backgroundColor</span>
+         background color table {r,g,b,a}, default: {0.8,0.8,1,0.4}
+        </li>
+        <li><span class="parameter">focusColor</span>
+         focus color table {r,g,b,a}, default: {0.2,0.2,1,0.6}
+        </li>
+        <li><span class="parameter">autosize</span>
+            <span class="types"><span class="type">bool</span></span>
+         whether size will be determined automatically, default: false
+        </li>
+        <li><span class="parameter">draggable</span>
+            <span class="types"><span class="type">bool</span></span>
+         can control be dragged, default: false
+        </li>
+        <li><span class="parameter">resizable</span>
+            <span class="types"><span class="type">bool</span></span>
+         can control be resized, default: false
+        </li>
+        <li><span class="parameter">minWidth</span>
+            <span class="types"><span class="type">int</span></span>
+         minimum width, default: 10
+        </li>
+        <li><span class="parameter">minHeight</span>
+            <span class="types"><span class="type">int</span></span>
+         minimum height, default: 10
+        </li>
+        <li><span class="parameter">maxWidth</span>
+            <span class="types"><span class="type">int</span></span>
+         maximum width, default: 1e9
+        </li>
+        <li><span class="parameter">maxHeight</span>
+            <span class="types"><span class="type">int</span></span>
+         maximum height, default: 1e9
+        </li>
+        <li><span class="parameter">OnResize</span>
+         table of function listeners for size changes
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "Control:Dispose"></a>
+    <strong>Control:Dispose (...)</strong>
+    </dt>
+    <dd>
+    Removes the control.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Control:SetParent"></a>
+    <strong>Control:SetParent (obj)</strong>
+    </dt>
+    <dd>
+    Sets the control's parent object.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+         parent object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Control:AddChild"></a>
+    <strong>Control:AddChild (obj, dontUpdate)</strong>
+    </dt>
+    <dd>
+    Adds a child object to the control
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+         child object
+        </li>
+        <li><span class="parameter">dontUpdate</span>
+         if true won't trigger a RequestRealign()
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Control:RemoveChild"></a>
+    <strong>Control:RemoveChild (obj)</strong>
+    </dt>
+    <dd>
+    Removes a child object from the control
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+         child object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Control:SetPos"></a>
+    <strong>Control:SetPos (x, y, w, h, clientArea, dontUpdateRelative)</strong>
+    </dt>
+    <dd>
+    Sets the control's position
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         x-coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         y-coordinate
+        </li>
+        <li><span class="parameter">w</span>
+            <span class="types"><span class="type">int</span></span>
+         width
+        </li>
+        <li><span class="parameter">h</span>
+            <span class="types"><span class="type">int</span></span>
+         height
+        </li>
+        <li><span class="parameter">clientArea</span>
+         TODO
+        </li>
+        <li><span class="parameter">dontUpdateRelative</span>
+            <span class="types"><span class="type">bool</span></span>
+         TODO
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Control:SetPosRelative"></a>
+    <strong>Control:SetPosRelative (x, y, w, h, clientArea, dontUpdateRelative)</strong>
+    </dt>
+    <dd>
+    Sets the control's relative position
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         x-coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         y-coordinate
+        </li>
+        <li><span class="parameter">w</span>
+            <span class="types"><span class="type">int</span></span>
+         width
+        </li>
+        <li><span class="parameter">h</span>
+            <span class="types"><span class="type">int</span></span>
+         height
+        </li>
+        <li><span class="parameter">clientArea</span>
+         TODO
+        </li>
+        <li><span class="parameter">dontUpdateRelative</span>
+            <span class="types"><span class="type">bool</span></span>
+         TODO
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Control:Resize"></a>
+    <strong>Control:Resize (w, h, clientArea, dontUpdateRelative)</strong>
+    </dt>
+    <dd>
+    Resize the control
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">w</span>
+            <span class="types"><span class="type">int</span></span>
+         width
+        </li>
+        <li><span class="parameter">h</span>
+            <span class="types"><span class="type">int</span></span>
+         height
+        </li>
+        <li><span class="parameter">clientArea</span>
+         TODO
+        </li>
+        <li><span class="parameter">dontUpdateRelative</span>
+            <span class="types"><span class="type">bool</span></span>
+         TODO
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Control:Invalidate"></a>
+    <strong>Control:Invalidate ()</strong>
+    </dt>
+    <dd>
+    Requests a redraw of the control.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Control:InvalidateSelf"></a>
+    <strong>Control:InvalidateSelf ()</strong>
+    </dt>
+    <dd>
+    Requests a redraw of the control.
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.0</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
