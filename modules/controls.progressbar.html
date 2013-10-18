@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/controls.button.html">button</a></li>
+  <li><a href="../modules/controls.checkbox.html">checkbox</a></li>
+  <li><a href="../modules/controls.colorbars.html">colorbars</a></li>
+  <li><a href="../modules/controls.combobox.html">combobox</a></li>
+  <li><a href="../modules/controls.control.html">control</a></li>
+  <li><a href="../modules/controls.editbox.html">editbox</a></li>
+  <li><a href="../modules/controls.font.html">font</a></li>
+  <li><a href="../modules/controls.grid.html">grid</a></li>
+  <li><a href="../modules/controls.image.html">image</a></li>
+  <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
+  <li><a href="../modules/controls.label.html">label</a></li>
+  <li><a href="../modules/controls.layoutpanel.html">layoutpanel</a></li>
+  <li><a href="../modules/controls.line.html">line</a></li>
+  <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
+  <li><a href="../modules/controls.object.html">object</a></li>
+  <li><a href="../modules/controls.panel.html">panel</a></li>
+  <li><strong>progressbar</strong></li>
+  <li><a href="../modules/controls.scale.html">scale</a></li>
+  <li><a href="../modules/controls.screen.html">screen</a></li>
+  <li><a href="../modules/controls.scrollpanel.html">scrollpanel</a></li>
+  <li><a href="../modules/controls.stackpanel.html">stackpanel</a></li>
+  <li><a href="../modules/controls.tabpanel.html">tabpanel</a></li>
+  <li><a href="../modules/controls.textbox.html">textbox</a></li>
+  <li><a href="../modules/controls.trackbar.html">trackbar</a></li>
+  <li><a href="../modules/controls.treeview.html">treeview</a></li>
+  <li><a href="../modules/controls.window.html">window</a></li>
+  <li><a href="../modules/headers.autolocalizer.html">autolocalizer</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>controls.progressbar</code></h1>
+
+<p>Progressbar module</p>
+<p></p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Progressbar:SetColor">Progressbar:SetColor (c)</a></td>
+	<td class="summary">Sets the new color</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Progressbar:SetMinMax">Progressbar:SetMinMax ([min=0[, max=1]])</a></td>
+	<td class="summary">Sets the minimum and maximum value of the progress bar</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Progressbar:SetValue">Progressbar:SetValue (v[, setcaption=false])</a></td>
+	<td class="summary">Sets the value of the progress bar</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Progressbar:SetCaption">Progressbar:SetCaption (str)</a></td>
+	<td class="summary">Sets the caption</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Progressbar">Progressbar</a></td>
+	<td class="summary">Progressbar fields.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "Progressbar:SetColor"></a>
+    <strong>Progressbar:SetColor (c)</strong>
+    </dt>
+    <dd>
+    Sets the new color
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">c</span>
+            <span class="types"><span class="type">{r,g,b,a}</span></span>
+         color table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Progressbar:SetMinMax"></a>
+    <strong>Progressbar:SetMinMax ([min=0[, max=1]])</strong>
+    </dt>
+    <dd>
+    Sets the minimum and maximum value of the progress bar
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">min</span>
+            <span class="types"><span class="type">int</span></span>
+         minimum value
+         (<em>default</em> 0)
+        </li>
+        <li><span class="parameter">max</span>
+            <span class="types"><span class="type">int</span></span>
+         maximum value (why is 1 the default?)
+         (<em>default</em> 1)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Progressbar:SetValue"></a>
+    <strong>Progressbar:SetValue (v[, setcaption=false])</strong>
+    </dt>
+    <dd>
+    Sets the value of the progress bar
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v</span>
+            <span class="types"><span class="type">int</span></span>
+         value of the progress abr
+        </li>
+        <li><span class="parameter">setcaption</span>
+            <span class="types"><span class="type">bool</span></span>
+         whether the caption should be set as well
+         (<em>default</em> false)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Progressbar:SetCaption"></a>
+    <strong>Progressbar:SetCaption (str)</strong>
+    </dt>
+    <dd>
+    Sets the caption
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         caption to be set
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Tables"></a>Tables</h2>
+    <dl class="function">
+    <dt>
+    <a name = "Progressbar"></a>
+    <strong>Progressbar</strong>
+    </dt>
+    <dd>
+    Progressbar fields.
+
+ Inherits from Control.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">min</span>
+            <span class="types"><span class="type">int</span></span>
+         minimum value of the Progressbar
+         (<em>default</em> 0)
+        </li>
+        <li><span class="parameter">max</span>
+            <span class="types"><span class="type">int</span></span>
+         maximum value of the Progressbar
+         (<em>default</em> 100)
+        </li>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">int</span></span>
+         value of the Progressbar
+         (<em>default</em> 100)
+        </li>
+        <li><span class="parameter">caption</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         text to be displayed
+         (<em>default</em> "")
+        </li>
+        <li><span class="parameter">color</span>
+            <span class="types"><span class="type">{r,g,b,a}</span></span>
+         specifies the color of the bar (default: {0,0,1,1})
+        </li>
+        <li><span class="parameter">backgroundColor</span>
+            <span class="types"><span class="type">{r,g,b,a}</span></span>
+         specifies the background color (default: {1,1,1,1})
+        </li>
+        <li><span class="parameter">OnChange</span>
+            <span class="types"><span class="type">{func1,fun2,...}</span></span>
+         function listeners for value change (default {})
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/controls.control.html#Control">control.Control</a>
+    </ul>
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.0</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -49,7 +49,7 @@
   <li><a href="../modules/controls.grid.html">grid</a></li>
   <li><a href="../modules/controls.image.html">image</a></li>
   <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
-  <li><strong>label</strong></li>
+  <li><a href="../modules/controls.label.html">label</a></li>
   <li><a href="../modules/controls.layoutpanel.html">layoutpanel</a></li>
   <li><a href="../modules/controls.line.html">line</a></li>
   <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
@@ -58,7 +58,7 @@
   <li><a href="../modules/controls.progressbar.html">progressbar</a></li>
   <li><a href="../modules/controls.scale.html">scale</a></li>
   <li><a href="../modules/controls.screen.html">screen</a></li>
-  <li><a href="../modules/controls.scrollpanel.html">scrollpanel</a></li>
+  <li><strong>scrollpanel</strong></li>
   <li><a href="../modules/controls.stackpanel.html">stackpanel</a></li>
   <li><a href="../modules/controls.tabpanel.html">tabpanel</a></li>
   <li><a href="../modules/controls.textbox.html">textbox</a></li>
@@ -72,24 +72,24 @@
 
 <div id="content">
 
-<h1>Module <code>controls.label</code></h1>
+<h1>Module <code>controls.scrollpanel</code></h1>
 
-<p>Label module</p>
+<p>ScrollPanel module</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Label:SetCaption">Label:SetCaption (newcaption)</a></td>
-	<td class="summary">Set the label caption</td>
+	<td class="name" nowrap><a href="#ScrollPanel:SetScrollPos">ScrollPanel:SetScrollPos (x, y)</a></td>
+	<td class="summary">Sets the scroll position</td>
 	</tr>
 </table>
 <h2><a href="#Tables">Tables</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Label">Label</a></td>
-	<td class="summary">Label fields.</td>
+	<td class="name" nowrap><a href="#ScrollPanel">ScrollPanel</a></td>
+	<td class="summary">ScrollPanel fields.</td>
 	</tr>
 </table>
 
@@ -100,17 +100,21 @@
     <h2><a name="Functions"></a>Functions</h2>
     <dl class="function">
     <dt>
-    <a name = "Label:SetCaption"></a>
-    <strong>Label:SetCaption (newcaption)</strong>
+    <a name = "ScrollPanel:SetScrollPos"></a>
+    <strong>ScrollPanel:SetScrollPos (x, y)</strong>
     </dt>
     <dd>
-    Set the label caption
+    Sets the scroll position
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">newcaption</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         new caption to be set
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         x position
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         y position
         </li>
     </ul>
 
@@ -123,31 +127,61 @@
     <h2><a name="Tables"></a>Tables</h2>
     <dl class="function">
     <dt>
-    <a name = "Label"></a>
-    <strong>Label</strong>
+    <a name = "ScrollPanel"></a>
+    <strong>ScrollPanel</strong>
     </dt>
     <dd>
-    Label fields.
+    ScrollPanel fields.
 
  Inherits from Control.
 
 
     <h3>Fields:</h3>
     <ul>
-        <li><span class="parameter">align</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         alignment
-         (<em>default</em> "left")
+        <li><span class="parameter">scrollBarSize</span>
+            <span class="types"><span class="type">int</span></span>
+         size of the scrollbar
+         (<em>default</em> 12)
         </li>
-        <li><span class="parameter">valign</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         vertical alignment
-         (<em>default</em> "linecenter")
+        <li><span class="parameter">scrollPosX</span>
+            <span class="types"><span class="type">int</span></span>
+         position of the scrollbar
+         (<em>default</em> 0)
         </li>
-        <li><span class="parameter">caption</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         text to be displayed
-         (<em>default</em> "no text")
+        <li><span class="parameter">scrollPosY</span>
+            <span class="types"><span class="type">int</span></span>
+         position of the scrollbar
+         (<em>default</em> 0)
+        </li>
+        <li><span class="parameter">verticalScrollbar</span>
+            <span class="types"><span class="type">bool</span></span>
+         the vertical scroll bar is enabled
+         (<em>default</em> true)
+        </li>
+        <li><span class="parameter">horizontalScrollbar</span>
+            <span class="types"><span class="type">bool</span></span>
+         the horizontal scroll bar is enabled
+         (<em>default</em> true)
+        </li>
+        <li><span class="parameter">smoothScroll</span>
+            <span class="types"><span class="type">bool</span></span>
+         smooth scroll is enabled
+         (<em>default</em> true)
+        </li>
+        <li><span class="parameter">verticalSmartScroll</span>
+            <span class="types"><span class="type">bool</span></span>
+         if control is scrolled to bottom, keep scroll when layout changes
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">smoothScrollTime</span>
+            <span class="types"><span class="type">number</span></span>
+         time of the smooth scroll, in seconds
+         (<em>default</em> 0.7)
+        </li>
+        <li><span class="parameter">ignoreMouseWheel</span>
+            <span class="types"><span class="type">bool</span></span>
+         mouse wheel scrolling is enabled
+         (<em>default</em> false)
         </li>
     </ul>
 

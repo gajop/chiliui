@@ -32,7 +32,6 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Functions">Functions</a></li>
 <li><a href="#Tables">Tables</a></li>
 </ul>
 
@@ -49,7 +48,7 @@
   <li><a href="../modules/controls.grid.html">grid</a></li>
   <li><a href="../modules/controls.image.html">image</a></li>
   <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
-  <li><strong>label</strong></li>
+  <li><a href="../modules/controls.label.html">label</a></li>
   <li><a href="../modules/controls.layoutpanel.html">layoutpanel</a></li>
   <li><a href="../modules/controls.line.html">line</a></li>
   <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
@@ -60,7 +59,7 @@
   <li><a href="../modules/controls.screen.html">screen</a></li>
   <li><a href="../modules/controls.scrollpanel.html">scrollpanel</a></li>
   <li><a href="../modules/controls.stackpanel.html">stackpanel</a></li>
-  <li><a href="../modules/controls.tabpanel.html">tabpanel</a></li>
+  <li><strong>tabpanel</strong></li>
   <li><a href="../modules/controls.textbox.html">textbox</a></li>
   <li><a href="../modules/controls.trackbar.html">trackbar</a></li>
   <li><a href="../modules/controls.treeview.html">treeview</a></li>
@@ -72,24 +71,17 @@
 
 <div id="content">
 
-<h1>Module <code>controls.label</code></h1>
+<h1>Module <code>controls.tabpanel</code></h1>
 
-<p>Label module</p>
+<p>TabPanel module</p>
 <p></p>
 
 
-<h2><a href="#Functions">Functions</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#Label:SetCaption">Label:SetCaption (newcaption)</a></td>
-	<td class="summary">Set the label caption</td>
-	</tr>
-</table>
 <h2><a href="#Tables">Tables</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Label">Label</a></td>
-	<td class="summary">Label fields.</td>
+	<td class="name" nowrap><a href="#TabPanel">TabPanel</a></td>
+	<td class="summary">TabPanel fields.</td>
 	</tr>
 </table>
 
@@ -97,57 +89,25 @@
 <br/>
 
 
-    <h2><a name="Functions"></a>Functions</h2>
-    <dl class="function">
-    <dt>
-    <a name = "Label:SetCaption"></a>
-    <strong>Label:SetCaption (newcaption)</strong>
-    </dt>
-    <dd>
-    Set the label caption
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">newcaption</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         new caption to be set
-        </li>
-    </ul>
-
-
-
-
-
-</dd>
-</dl>
     <h2><a name="Tables"></a>Tables</h2>
     <dl class="function">
     <dt>
-    <a name = "Label"></a>
-    <strong>Label</strong>
+    <a name = "TabPanel"></a>
+    <strong>TabPanel</strong>
     </dt>
     <dd>
-    Label fields.
-
- Inherits from Control.
-
+    TabPanel fields.
+ Inherits from LayoutPanel.
 
     <h3>Fields:</h3>
     <ul>
-        <li><span class="parameter">align</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         alignment
-         (<em>default</em> "left")
+        <li><span class="parameter">tabs</span>
+            <span class="types"><span class="type">{tab1,tab2,...}</span></span>
+         contained in the tab panel, each tab has a .name (string) and a .children field (table of Controls)(default {})
         </li>
-        <li><span class="parameter">valign</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         vertical alignment
-         (<em>default</em> "linecenter")
-        </li>
-        <li><span class="parameter">caption</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         text to be displayed
-         (<em>default</em> "no text")
+        <li><span class="parameter">currentTab</span>
+            <span class="types"><span class="type">chili.Control</span></span>
+         currently visible tab
         </li>
     </ul>
 
@@ -155,7 +115,7 @@
 
     <h3>See also:</h3>
     <ul>
-         <a href="../modules/controls.control.html#Control">control.Control</a>
+         <a href="../modules/controls.layoutpanel.html#LayoutPanel">layoutpanel.LayoutPanel</a>
     </ul>
 
 

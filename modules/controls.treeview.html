@@ -32,7 +32,6 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Functions">Functions</a></li>
 <li><a href="#Tables">Tables</a></li>
 </ul>
 
@@ -49,7 +48,7 @@
   <li><a href="../modules/controls.grid.html">grid</a></li>
   <li><a href="../modules/controls.image.html">image</a></li>
   <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
-  <li><strong>label</strong></li>
+  <li><a href="../modules/controls.label.html">label</a></li>
   <li><a href="../modules/controls.layoutpanel.html">layoutpanel</a></li>
   <li><a href="../modules/controls.line.html">line</a></li>
   <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
@@ -63,7 +62,7 @@
   <li><a href="../modules/controls.tabpanel.html">tabpanel</a></li>
   <li><a href="../modules/controls.textbox.html">textbox</a></li>
   <li><a href="../modules/controls.trackbar.html">trackbar</a></li>
-  <li><a href="../modules/controls.treeview.html">treeview</a></li>
+  <li><strong>treeview</strong></li>
   <li><a href="../modules/controls.window.html">window</a></li>
   <li><a href="../modules/headers.autolocalizer.html">autolocalizer</a></li>
 </ul>
@@ -72,24 +71,17 @@
 
 <div id="content">
 
-<h1>Module <code>controls.label</code></h1>
+<h1>Module <code>controls.treeview</code></h1>
 
-<p>Label module</p>
+<p>TreeView module</p>
 <p></p>
 
 
-<h2><a href="#Functions">Functions</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#Label:SetCaption">Label:SetCaption (newcaption)</a></td>
-	<td class="summary">Set the label caption</td>
-	</tr>
-</table>
 <h2><a href="#Tables">Tables</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Label">Label</a></td>
-	<td class="summary">Label fields.</td>
+	<td class="name" nowrap><a href="#TreeView">TreeView</a></td>
+	<td class="summary">TreeView fields.</td>
 	</tr>
 </table>
 
@@ -97,57 +89,37 @@
 <br/>
 
 
-    <h2><a name="Functions"></a>Functions</h2>
-    <dl class="function">
-    <dt>
-    <a name = "Label:SetCaption"></a>
-    <strong>Label:SetCaption (newcaption)</strong>
-    </dt>
-    <dd>
-    Set the label caption
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">newcaption</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         new caption to be set
-        </li>
-    </ul>
-
-
-
-
-
-</dd>
-</dl>
     <h2><a name="Tables"></a>Tables</h2>
     <dl class="function">
     <dt>
-    <a name = "Label"></a>
-    <strong>Label</strong>
+    <a name = "TreeView"></a>
+    <strong>TreeView</strong>
     </dt>
     <dd>
-    Label fields.
+    TreeView fields.
 
  Inherits from Control.
 
 
     <h3>Fields:</h3>
     <ul>
-        <li><span class="parameter">align</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         alignment
-         (<em>default</em> "left")
+        <li><span class="parameter">autosize</span>
+            <span class="types"><span class="type">bool</span></span>
+         whether size is automatically determined
+         (<em>default</em> true)
         </li>
-        <li><span class="parameter">valign</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         vertical alignment
-         (<em>default</em> "linecenter")
+        <li><span class="parameter">selected</span>
+            <span class="types"><span class="type">int</span></span>
+         selected item
+         (<em>default</em> 1)
         </li>
-        <li><span class="parameter">caption</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         text to be displayed
-         (<em>default</em> "no text")
+        <li><span class="parameter">nodes</span>
+            <span class="types"><span class="type">{TreeNode1,TreeNode2,...}</span></span>
+         nodes of the tree
+        </li>
+        <li><span class="parameter">OnSelectNode</span>
+            <span class="types"><span class="type">{func1,fun2,...}</span></span>
+         function listeners for node selection (default {})
         </li>
     </ul>
 

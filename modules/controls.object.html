@@ -32,6 +32,7 @@
 
 <h2>Contents</h2>
 <ul>
+<li><a href="#Functions">Functions</a></li>
 <li><a href="#Tables">Tables</a></li>
 </ul>
 
@@ -53,6 +54,17 @@
   <li><a href="../modules/controls.line.html">line</a></li>
   <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
   <li><strong>object</strong></li>
+  <li><a href="../modules/controls.panel.html">panel</a></li>
+  <li><a href="../modules/controls.progressbar.html">progressbar</a></li>
+  <li><a href="../modules/controls.scale.html">scale</a></li>
+  <li><a href="../modules/controls.screen.html">screen</a></li>
+  <li><a href="../modules/controls.scrollpanel.html">scrollpanel</a></li>
+  <li><a href="../modules/controls.stackpanel.html">stackpanel</a></li>
+  <li><a href="../modules/controls.tabpanel.html">tabpanel</a></li>
+  <li><a href="../modules/controls.textbox.html">textbox</a></li>
+  <li><a href="../modules/controls.trackbar.html">trackbar</a></li>
+  <li><a href="../modules/controls.treeview.html">treeview</a></li>
+  <li><a href="../modules/controls.window.html">window</a></li>
   <li><a href="../modules/headers.autolocalizer.html">autolocalizer</a></li>
 </ul>
 
@@ -66,6 +78,69 @@
 <p></p>
 
 
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Object:New">Object:New (obj)</a></td>
+	<td class="summary">Object constructor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:Dispose">Object:Dispose (_internal)</a></td>
+	<td class="summary">Disposes of the object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:SetParent">Object:SetParent (obj)</a></td>
+	<td class="summary">Sets the parent object</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:AddChild">Object:AddChild (obj)</a></td>
+	<td class="summary">Adds the child object</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:RemoveChild">Object:RemoveChild (child)</a></td>
+	<td class="summary">Removes the child object</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:ClearChildren">Object:ClearChildren ()</a></td>
+	<td class="summary">Removes all children</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:IsEmpty">Object:IsEmpty ()</a></td>
+	<td class="summary">Specifies whether the object has any visible children</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:HideChild">Object:HideChild (obj)</a></td>
+	<td class="summary">Hides a specific child</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:ShowChild">Object:ShowChild (obj)</a></td>
+	<td class="summary">Makes a specific child visible</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:SetVisibility">Object:SetVisibility (visible)</a></td>
+	<td class="summary">Sets the visibility of the object</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:Hide">Object:Hide ()</a></td>
+	<td class="summary">Hides the objects</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:Show">Object:Show ()</a></td>
+	<td class="summary">Makes the object visible</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:ToggleVisibility">Object:ToggleVisibility ()</a></td>
+	<td class="summary">Toggles object visibility</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:GetChildByName">Object:GetChildByName (name)</a></td>
+	<td class="summary">Returns a child by name</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Object:GetObjectByName">Object:GetObjectByName (name)</a></td>
+	<td class="summary">Resursive search to find an object by its name</td>
+	</tr>
+</table>
 <h2><a href="#Tables">Tables</a></h2>
 <table class="function_list">
 	<tr>
@@ -78,6 +153,300 @@
 <br/>
 
 
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "Object:New"></a>
+    <strong>Object:New (obj)</strong>
+    </dt>
+    <dd>
+    Object constructor
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+            <span class="types"><a class="type" href="../modules/controls.object.html#Object">Object</a></span>
+         the object table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:Dispose"></a>
+    <strong>Object:Dispose (_internal)</strong>
+    </dt>
+    <dd>
+    Disposes of the object.
+
+ Calling this releases unmanaged resources like display lists and disposes of the object.
+
+ Children are disposed too.
+
+ TODO: use scream, in case the user forgets.
+
+ nil -> nil
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_internal</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:SetParent"></a>
+    <strong>Object:SetParent (obj)</strong>
+    </dt>
+    <dd>
+    Sets the parent object
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+            <span class="types"><a class="type" href="../modules/controls.object.html#Object">Object</a></span>
+         parent object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:AddChild"></a>
+    <strong>Object:AddChild (obj)</strong>
+    </dt>
+    <dd>
+    Adds the child object
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+            <span class="types"><a class="type" href="../modules/controls.object.html#Object">Object</a></span>
+         child object to be added
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:RemoveChild"></a>
+    <strong>Object:RemoveChild (child)</strong>
+    </dt>
+    <dd>
+    Removes the child object
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">child</span>
+            <span class="types"><a class="type" href="../modules/controls.object.html#Object">Object</a></span>
+         child object to be removed
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:ClearChildren"></a>
+    <strong>Object:ClearChildren ()</strong>
+    </dt>
+    <dd>
+    Removes all children
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:IsEmpty"></a>
+    <strong>Object:IsEmpty ()</strong>
+    </dt>
+    <dd>
+    Specifies whether the object has any visible children
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:HideChild"></a>
+    <strong>Object:HideChild (obj)</strong>
+    </dt>
+    <dd>
+    Hides a specific child
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+            <span class="types"><a class="type" href="../modules/controls.object.html#Object">Object</a></span>
+         child to be hidden
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:ShowChild"></a>
+    <strong>Object:ShowChild (obj)</strong>
+    </dt>
+    <dd>
+    Makes a specific child visible
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+            <span class="types"><a class="type" href="../modules/controls.object.html#Object">Object</a></span>
+         child to be made visible
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:SetVisibility"></a>
+    <strong>Object:SetVisibility (visible)</strong>
+    </dt>
+    <dd>
+    Sets the visibility of the object
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">visible</span>
+            <span class="types"><span class="type">bool</span></span>
+         visibility status
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:Hide"></a>
+    <strong>Object:Hide ()</strong>
+    </dt>
+    <dd>
+    Hides the objects
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:Show"></a>
+    <strong>Object:Show ()</strong>
+    </dt>
+    <dd>
+    Makes the object visible
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:ToggleVisibility"></a>
+    <strong>Object:ToggleVisibility ()</strong>
+    </dt>
+    <dd>
+    Toggles object visibility
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:GetChildByName"></a>
+    <strong>Object:GetChildByName (name)</strong>
+    </dt>
+    <dd>
+    Returns a child by name
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         child name
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../modules/controls.object.html#Object">Object</a></span>
+        child
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Object:GetObjectByName"></a>
+    <strong>Object:GetObjectByName (name)</strong>
+    </dt>
+    <dd>
+    Resursive search to find an object by its name
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         name of the object
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../modules/controls.object.html#Object">Object</a></span>
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
     <h2><a name="Tables"></a>Tables</h2>
     <dl class="function">
     <dt>
@@ -89,23 +458,71 @@
 
     <h3>Fields:</h3>
     <ul>
-        <li><span class="parameter">classname</span>
-        x         = 0, y         = 0, width     = 10, height    = 10,
-        </li>
-        <li><span class="parameter">defaultWidth</span>
-        FIXME really needed?
-        </li>
-        <li><span class="parameter">defaultHeight</span>
-
-        </li>
         <li><span class="parameter">visible</span>
-        hidden   = false, --// synonym for above
-        </li>
-        <li><span class="parameter">preserveChildrenOrder</span>
-        // if false adding/removing children is much faster, but also the order (in the .children array) isn't reliable anymore
+            <span class="types"><span class="type">bool</span></span>
+         control is displayed
+         (<em>default</em> true)
         </li>
         <li><span class="parameter">children</span>
-
+            <span class="types"><span class="type">{Object1,Object2,...}</span></span>
+         table of visible children objects (default {})
+        </li>
+        <li><span class="parameter">children_hidden</span>
+            <span class="types"><span class="type">{Object1,Object2,...}</span></span>
+         table of invisible children objects (default {})
+        </li>
+        <li><span class="parameter">childrenByName</span>
+            <span class="types"><span class="type">{"obj1Name"=Object1,"obj2Name"=Object2,...}</span></span>
+         table mapping name->child
+        </li>
+        <li><span class="parameter">OnDispose</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for object disposal, (default {})
+        </li>
+        <li><span class="parameter">OnClick</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for mouse click, (default {})
+        </li>
+        <li><span class="parameter">OnDblClick</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for mouse double click, (default {})
+        </li>
+        <li><span class="parameter">OnMouseDown</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for mouse press, (default {})
+        </li>
+        <li><span class="parameter">OnMouseUp</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for mouse release, (default {})
+        </li>
+        <li><span class="parameter">OnMouseMove</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for mouse movement, (default {})
+        </li>
+        <li><span class="parameter">OnMouseWheel</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for mouse scrolling, (default {})
+        </li>
+        <li><span class="parameter">OnMouseOver</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for mouse over...?, (default {})
+        </li>
+        <li><span class="parameter">OnMouseOut</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for mouse leaving the object, (default {})
+        </li>
+        <li><span class="parameter">OnKeyPress</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for key press, (default {})
+        </li>
+        <li><span class="parameter">OnFocusUpdate</span>
+            <span class="types"><span class="type">{func1,func2,...}</span></span>
+          function listeners for focus change, (default {})
+        </li>
+        <li><span class="parameter">disableChildrenHitTest</span>
+            <span class="types"><span class="type">bool</span></span>
+         if set childrens are not clickable/draggable etc - their mouse events are not processed
+         (<em>default</em> false)
         </li>
     </ul>
 

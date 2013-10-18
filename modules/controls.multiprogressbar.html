@@ -30,6 +30,10 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Tables">Tables</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -49,6 +53,17 @@
   <li><a href="../modules/controls.line.html">line</a></li>
   <li><strong>multiprogressbar</strong></li>
   <li><a href="../modules/controls.object.html">object</a></li>
+  <li><a href="../modules/controls.panel.html">panel</a></li>
+  <li><a href="../modules/controls.progressbar.html">progressbar</a></li>
+  <li><a href="../modules/controls.scale.html">scale</a></li>
+  <li><a href="../modules/controls.screen.html">screen</a></li>
+  <li><a href="../modules/controls.scrollpanel.html">scrollpanel</a></li>
+  <li><a href="../modules/controls.stackpanel.html">stackpanel</a></li>
+  <li><a href="../modules/controls.tabpanel.html">tabpanel</a></li>
+  <li><a href="../modules/controls.textbox.html">textbox</a></li>
+  <li><a href="../modules/controls.trackbar.html">trackbar</a></li>
+  <li><a href="../modules/controls.treeview.html">treeview</a></li>
+  <li><a href="../modules/controls.window.html">window</a></li>
   <li><a href="../modules/headers.autolocalizer.html">autolocalizer</a></li>
 </ul>
 
@@ -58,15 +73,71 @@
 
 <h1>Module <code>controls.multiprogressbar</code></h1>
 
-<p>function that can be used to rescale graph - takes 0-1 and must return 0-1</p>
+<p>Multiprogressbar module</p>
 <p></p>
 
 
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Multiprogressbar">Multiprogressbar</a></td>
+	<td class="summary">Multiprogressbar fields.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Tables"></a>Tables</h2>
+    <dl class="function">
+    <dt>
+    <a name = "Multiprogressbar"></a>
+    <strong>Multiprogressbar</strong>
+    </dt>
+    <dd>
+    Multiprogressbar fields.
+
+ Inherits from Control.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">drawBorder</span>
+            <span class="types"><span class="type">bool</span></span>
+         should the border be drawn?
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">borderColor</span>
+            <span class="types"><span class="type">{r,g,b,a}</span></span>
+         specifies the border color (default: {1,0,0,1})
+        </li>
+        <li><span class="parameter">orientation</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         orientation of the progress bar
+         (<em>default</em> "horizontal")
+        </li>
+        <li><span class="parameter">reverse</span>
+            <span class="types"><span class="type">bool</span></span>
+         reverse drawing orientation
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">scaleFunction</span>
+            <span class="types"><span class="type">fnc</span></span>
+         scaling function that takes 0-1 and must return 0-1
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/controls.control.html#Control">control.Control</a>
+    </ul>
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->

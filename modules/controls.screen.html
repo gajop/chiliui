@@ -32,7 +32,6 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Functions">Functions</a></li>
 <li><a href="#Tables">Tables</a></li>
 </ul>
 
@@ -49,7 +48,7 @@
   <li><a href="../modules/controls.grid.html">grid</a></li>
   <li><a href="../modules/controls.image.html">image</a></li>
   <li><a href="../modules/controls.imagelistview.html">imagelistview</a></li>
-  <li><strong>label</strong></li>
+  <li><a href="../modules/controls.label.html">label</a></li>
   <li><a href="../modules/controls.layoutpanel.html">layoutpanel</a></li>
   <li><a href="../modules/controls.line.html">line</a></li>
   <li><a href="../modules/controls.multiprogressbar.html">multiprogressbar</a></li>
@@ -57,7 +56,7 @@
   <li><a href="../modules/controls.panel.html">panel</a></li>
   <li><a href="../modules/controls.progressbar.html">progressbar</a></li>
   <li><a href="../modules/controls.scale.html">scale</a></li>
-  <li><a href="../modules/controls.screen.html">screen</a></li>
+  <li><strong>screen</strong></li>
   <li><a href="../modules/controls.scrollpanel.html">scrollpanel</a></li>
   <li><a href="../modules/controls.stackpanel.html">stackpanel</a></li>
   <li><a href="../modules/controls.tabpanel.html">tabpanel</a></li>
@@ -72,24 +71,17 @@
 
 <div id="content">
 
-<h1>Module <code>controls.label</code></h1>
+<h1>Module <code>controls.screen</code></h1>
 
-<p>Label module</p>
+<p>Screen module</p>
 <p></p>
 
 
-<h2><a href="#Functions">Functions</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#Label:SetCaption">Label:SetCaption (newcaption)</a></td>
-	<td class="summary">Set the label caption</td>
-	</tr>
-</table>
 <h2><a href="#Tables">Tables</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Label">Label</a></td>
-	<td class="summary">Label fields.</td>
+	<td class="name" nowrap><a href="#Screen">Screen</a></td>
+	<td class="summary">Screen fields.</td>
 	</tr>
 </table>
 
@@ -97,57 +89,51 @@
 <br/>
 
 
-    <h2><a name="Functions"></a>Functions</h2>
-    <dl class="function">
-    <dt>
-    <a name = "Label:SetCaption"></a>
-    <strong>Label:SetCaption (newcaption)</strong>
-    </dt>
-    <dd>
-    Set the label caption
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">newcaption</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         new caption to be set
-        </li>
-    </ul>
-
-
-
-
-
-</dd>
-</dl>
     <h2><a name="Tables"></a>Tables</h2>
     <dl class="function">
     <dt>
-    <a name = "Label"></a>
-    <strong>Label</strong>
+    <a name = "Screen"></a>
+    <strong>Screen</strong>
     </dt>
     <dd>
-    Label fields.
+    Screen fields.
 
- Inherits from Control.
+ Inherits from Object.
 
 
     <h3>Fields:</h3>
     <ul>
-        <li><span class="parameter">align</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         alignment
-         (<em>default</em> "left")
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         x position
+         (<em>default</em> 0)
         </li>
-        <li><span class="parameter">valign</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         vertical alignment
-         (<em>default</em> "linecenter")
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         y position
+         (<em>default</em> 0)
         </li>
-        <li><span class="parameter">caption</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         text to be displayed
-         (<em>default</em> "no text")
+        <li><span class="parameter">width</span>
+            <span class="types"><span class="type">int</span></span>
+         width
+         (<em>default</em> 0)
+        </li>
+        <li><span class="parameter">height</span>
+            <span class="types"><span class="type">int</span></span>
+         height
+         (<em>default</em> 0)
+        </li>
+        <li><span class="parameter">activeControl</span>
+            <span class="types"><a class="type" href="../modules/controls.control.html#Control">control.Control</a></span>
+         active control
+        </li>
+        <li><span class="parameter">focusedControl</span>
+            <span class="types"><a class="type" href="../modules/controls.control.html#Control">control.Control</a></span>
+         focused control
+        </li>
+        <li><span class="parameter">hoveredControl</span>
+            <span class="types"><a class="type" href="../modules/controls.control.html#Control">control.Control</a></span>
+         hovered control
         </li>
     </ul>
 
@@ -155,7 +141,7 @@
 
     <h3>See also:</h3>
     <ul>
-         <a href="../modules/controls.control.html#Control">control.Control</a>
+         <a href="../modules/controls.object.html#Object">object.Object</a>
     </ul>
 
 
