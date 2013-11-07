@@ -30,8 +30,12 @@ local inherited = this.inherited
 --- Set text
 -- @string t sets the text
 function TextBox:SetText(t)
+  if (self.text == t) then
+    return
+  end
   self.text = t
   self:RequestRealign()
+  self:Invalidate() -- seems RequestRealign() doesn't always cause an invalidate
 end
 
 --------------------------------------------------------------------------------
