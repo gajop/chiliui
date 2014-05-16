@@ -1,6 +1,16 @@
 --//=============================================================================
 --//
 
+function IsDisableHitTest(obj)
+    repeat 
+        if obj.disableChildrenHitTest then
+            return true
+        end
+        obj = obj.parent
+    until obj == nil
+    return false
+end
+
 function _DrawTextureAspect(x,y,w,h ,tw,th)
   local twa = w/tw
   local tha = h/th
@@ -278,11 +288,12 @@ function DrawWindow(obj)
 
   local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
-  local c = obj.color
+  local c = obj.color or {1,1,1,1}
+  if IsDisableHitTest(obj) then
+      c = mulColor(c, 0.5)
+  end
   if (c) then
     gl.Color(c)
-  else
-    gl.Color(1,1,1,1)
   end
   TextureHandler.LoadTexture(0,obj.TileImage,obj)
     local texInfo = gl.TextureInfo(obj.TileImage) or {xsize=1, ysize=1}
@@ -292,7 +303,11 @@ function DrawWindow(obj)
   gl.Texture(0,false)
 
   if (obj.caption) then
-    obj.font:Print(obj.caption, w*0.5, 9, "center")
+      local colorMul = 1
+      if IsDisableHitTest(obj) then
+          colorMul = 0.5
+      end
+    obj.font:Print(obj.caption, w*0.5, 9, "center", colorMul)
   end
 end
 
@@ -313,6 +328,9 @@ function DrawButton(obj)
   elseif (obj.state.hovered) --[[ or (obj.state.focused)]] then
     bgcolor = obj.focusColor
     --bgcolor = mixColors(bgcolor, obj.focusColor, 0.5)
+  end
+  if IsDisableHitTest(obj) then
+      bgcolor = mulColor(bgcolor, 0.5)
   end
   gl.Color(bgcolor)
 
@@ -339,7 +357,11 @@ function DrawButton(obj)
   gl.Texture(0,false)
 
   if (obj.caption) then
-    obj.font:Print(obj.caption, w*0.5, h*0.5, "center", "center")
+      local colorMul = 1
+      if IsDisableHitTest(obj) then
+          colorMul = 0.5
+      end
+    obj.font:Print(obj.caption, w*0.5, h*0.5, "center", "center", colorMul)
   end
 end
 
@@ -363,7 +385,11 @@ end
 function DrawEditBox(obj)
 	local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
-	gl.Color(obj.backgroundColor)
+    local bgcolor = obj.backgroundColor
+    if IsDisableHitTest(obj) then
+      bgcolor = mulColor(bgcolor, 0.5)
+    end
+	gl.Color(bgcolor)
 	TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
 	local texInfo = gl.TextureInfo(obj.TileImageBK) or {xsize=1, ysize=1}
 	local tw,th = texInfo.xsize, texInfo.ysize
@@ -429,7 +455,11 @@ function DrawEditBox(obj)
 		txt = txt:sub(1, lsize - 1)
 
 		gl.Color(1,1,1,1)
-		font:DrawInBox(txt, clientX, clientY, clientWidth, clientHeight, obj.align, obj.valign)
+        local colorMul = 1
+        if IsDisableHitTest(obj) then
+            colorMul = 0.5
+        end
+		font:DrawInBox(txt, clientX, clientY, clientWidth, clientHeight, obj.align, obj.valign, colorMul)
 
 		if obj.state.focused then
 			local cursorTxt = text:sub(obj.offset, obj.cursor - 1)
@@ -479,7 +509,11 @@ function DrawPanel(obj)
 
   local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
-  gl.Color(obj.backgroundColor)
+  local bgcolor = obj.backgroundColor
+  if IsDisableHitTest(obj) then
+    bgcolor = mulColor(bgcolor, 0.5)
+  end
+  gl.Color(bgcolor)
   TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
     local texInfo = gl.TextureInfo(obj.TileImageBK) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
@@ -502,10 +536,14 @@ end
 function DrawItemBkGnd(obj,x,y,w,h,state)
   local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
+  local bgcolor = obj.colorBK
+  if IsDisableHitTest(obj) then
+    bgcolor = mulColor(bgcolor, 0.5)
+  end
   if (state=="selected") then
     gl.Color(obj.colorBK_selected)
   else
-    gl.Color(obj.colorBK)
+    gl.Color(bgcolor)
   end
   TextureHandler.LoadTexture(0,obj.imageBK,obj)
     local texInfo = gl.TextureInfo(obj.imageBK) or {xsize=1, ysize=1}
@@ -548,7 +586,11 @@ function DrawScrollPanelBorder(self)
         height = height - self.scrollbarSize - 1
       end
 
-      gl.Color(self.borderColor)
+      local bgcolor = self.borderColor
+      if IsDisableHitTest(self) then
+        bgcolor = mulColor(bgcolor, 0.5)
+      end
+      gl.Color(bgcolor)
       gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledBorder, 0,0,width,height, skLeft,skTop,skRight,skBottom, tw,th, 0)
       gl.Texture(0,false)
   end
@@ -687,10 +729,14 @@ function DrawCheckbox(obj)
   local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
 
+  local colorMul = 1
+  if IsDisableHitTest(obj) then
+      colorMul =  0.5
+  end
   if (obj.state.hovered) then
     gl.Color(obj.focusColor)
   else
-    gl.Color(1,1,1,1)
+    gl.Color(1,1,1,colorMul)
   end
   TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
 
@@ -707,7 +753,11 @@ function DrawCheckbox(obj)
 
   gl.Color(1,1,1,1)
   if (obj.caption) then
-    obj.font:Print(obj.caption, tx, ty, nil, "center")
+      local colorMul = 1
+      if IsDisableHitTest(obj) then
+          colorMul = 0.5
+      end
+    obj.font:Print(obj.caption, tx, ty, nil, "center", colorMul)
   end
 end
 
@@ -722,7 +772,11 @@ function DrawProgressbar(obj)
 
   local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
-  gl.Color(obj.backgroundColor)
+  local bgcolor = obj.backgroundColor
+  if IsDisableHitTest(obj) then
+    bgcolor = mulColor(bgcolor, 0.5)
+  end
+  gl.Color(bgcolor)
   TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
     local texInfo = gl.TextureInfo(obj.TileImageBK) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
@@ -741,7 +795,11 @@ function DrawProgressbar(obj)
   gl.Texture(0,false)
 
   if (obj.caption) then
-    (obj.font):Print(obj.caption, w*0.5, h*0.5, "center", "center")
+      local colorMul = 1
+      if IsDisableHitTest(obj) then
+          colorMul = 0.5
+      end
+    (obj.font):Print(obj.caption, w*0.5, h*0.5, "center", "center", colorMul)
   end
 end
 
@@ -756,7 +814,11 @@ function DrawTrackbar(self)
   local skLeft,skTop,skRight,skBottom = unpack4(self.tiles)
   local pdLeft,pdTop,pdRight,pdBottom = unpack4(self.hitpadding)
 
-  gl.Color(1,1,1,1)
+  local bgcolor = 1
+  if IsDisableHitTest(self) then
+    bgcolor = mulColor(bgcolor, 0.5)
+  end
+  gl.Color(1,1,1,bgcolor)
 
   TextureHandler.LoadTexture(0,self.TileImage,self)
     local texInfo = gl.TextureInfo(self.TileImage) or {xsize=1, ysize=1}
@@ -837,7 +899,11 @@ function DrawTreeviewNode(self)
 
     local skLeft,skTop,skRight,skBottom = unpack4(self.treeview.tiles)
 
-    gl.Color(1,1,1,1)
+    local bgcolor = 1
+    if IsDisableHitTest(self) then
+        bgcolor = mulColor(bgcolor, 0.5)
+    end
+    gl.Color(1,1,1,bgcolor)
     TextureHandler.LoadTexture(0,self.treeview.ImageNodeSelected,self)
       local texInfo = gl.TextureInfo(self.treeview.ImageNodeSelected) or {xsize=1, ysize=1}
       local tw,th = texInfo.xsize, texInfo.ysize
@@ -889,7 +955,11 @@ function DrawTreeviewNodeTree(self)
     y2 = y3
   end
 
-  gl.Color(self.treeview.treeColor)
+  local bgcolor = self.treeview.treeColor
+  if IsDisableHitTest(self) then
+      bgcolor = mulColor(bgcolor, 0.5)
+  end
+  gl.Color(bgcolor)
   gl.BeginEnd(GL.TRIANGLES, _DrawLineV, x1-0.5, y1, y2, 1, _DrawLineH, x1, x2, y3-0.5, 1)
 
   if (not self.nodes[1]) then
@@ -915,7 +985,11 @@ end
 --//
 
 function DrawLine(self)
-  gl.Color(self.borderColor)
+    local bgcolor = self.borderColor
+    if IsDisableHitTest(self) then
+        bgcolor = mulColor(bgcolor, 0.5)
+    end
+  gl.Color(bgcolor)
 
     if (self.style:find("^v")) then
       local skLeft,skTop,skRight,skBottom = unpack4(self.tilesV)
@@ -984,6 +1058,9 @@ function DrawTabBarItem(obj)
 
   if (obj.caption) then
     local cx,cy,cw,ch = unpack4(obj.clientArea)
+    if IsDisableHitTest(obj) then
+        gl.Color(1,1,1,0.5)
+    end
     obj.font:DrawInBox(obj.caption, cx, cy, cw, ch, "center", "center")
   end
 end

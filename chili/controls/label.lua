@@ -100,7 +100,11 @@ end
 
 function Label:DrawControl()
   local font = self.font
-  font:DrawInBox(self._caption,0,0,self.width,self.height,self.align,self.valign)
+  local colorMul = 1
+  if IsDisableHitTest(self) then
+      colorMul = 0.5
+  end
+  font:DrawInBox(self._caption,0,0,self.width,self.height,self.align,self.valign, colorMul)
 
   if (self.debug) then
     gl.Color(0,1,0,0.5)

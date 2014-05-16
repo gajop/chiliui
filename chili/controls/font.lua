@@ -246,7 +246,7 @@ end
 
 --//=============================================================================
 
-function Font:_DrawText(text, x, y, extra)
+function Font:_DrawText(text, x, y, extra, colorMul)
 	local font = self._font
 
 	gl.PushAttrib(GL.COLOR_BUFFER_BIT)
@@ -256,7 +256,11 @@ function Font:_DrawText(text, x, y, extra)
 		if AreInRTT() then
 			gl.BlendFuncSeparate(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA, GL.ZERO, GL.ONE_MINUS_SRC_ALPHA)
 		end
+        colorMul = colorMul or 1
+        local oldColor = self.color[4]
+        self.color[4] = self.color[4] * colorMul
 		font:SetTextColor(self.color)
+        self.color[4] = oldColor
 		font:SetOutlineColor(self.outlineColor)
 		font:SetAutoOutlineColor(self.autoOutlineColor)
 			font:Print(text, x, -y, self.size, extra)
@@ -266,7 +270,7 @@ function Font:_DrawText(text, x, y, extra)
 end
 
 
-function Font:Draw(text, x, y, align, valign)
+function Font:Draw(text, x, y, align, valign, colorMul)
   if (not text) then
     return
   end
@@ -278,11 +282,11 @@ function Font:Draw(text, x, y, align, valign)
 	extra = extra .. 's'
   end
 
-  self:_DrawText(text, x, y, extra)
+  self:_DrawText(text, x, y, extra, colorMul)
 end
 
 
-function Font:DrawInBox(text, x, y, w, h, align, valign)
+function Font:DrawInBox(text, x, y, w, h, align, valign, colorMul)
   if (not text) then
     return
   end
@@ -297,7 +301,7 @@ function Font:DrawInBox(text, x, y, w, h, align, valign)
 
   y = y + 1 --// FIXME: if this isn't done some chars as 'R' get truncated at the top
 
-  self:_DrawText(text, x, y, extra)
+  self:_DrawText(text, x, y, extra, colorMul)
 end
 
 Font.Print = Font.Draw
