@@ -28,6 +28,8 @@ Control = Object:Inherit{
   borderColor2    = {0.0, 0.0, 0.0, 0.8},
   backgroundColor = {0.8, 0.8, 1.0, 0.4},
   focusColor      = {0.2, 0.2, 1.0, 0.6},
+  selectedColor   = {0.6, 0.6, 0.8, 0.8},
+  disabledColor   = {0.4, 0.4, 0.4, 0.6},
 
   autosize        = false,
   savespace       = true, --// iff autosize==true, it shrinks the control to the minimum needed space, if disabled autosize _normally_ only enlarges the control
@@ -67,7 +69,7 @@ Control = Object:Inherit{
     checked  = false,
     selected = false, --FIXME implement
     pressed  = false,
-    enabled  = true, --FIXME implement
+    enabled  = true,
   },
 
   skin            = nil,
@@ -75,11 +77,16 @@ Control = Object:Inherit{
 
   drawcontrolv2 = nil, --// disable backward support with old DrawControl gl state (with 2.1 self.xy translation isn't needed anymore)
 
-  useRTT = ((gl.CreateFBO and gl.BlendFuncSeparate) ~= nil),
-  useDLists = (gl.CreateList ~= nil) and false, --FIXME broken in combination with RTT (wrong blending)
+  useRTT = false and ((gl.CreateFBO and gl.BlendFuncSeparate) ~= nil),
+  useDLists = false, --(gl.CreateList ~= nil), --FIXME broken in combination with RTT (wrong blending)
 
   OnResize        = {},
+  OnEnableChanged = {},
+
+  -- __nofont should be manually set to true when using this class directly
+  __nofont = false,
 }
+Control.disabledFont = table.merge({ color = {0.8, 0.8, 0.8, 0.8} }, Control.font)
 
 local this = Control
 local inherited = this.inherited
@@ -96,7 +103,7 @@ function Control:New(obj)
 
 
   --// load the skin for this control
-  obj.classname = self.classname
+  obj.classname = obj.classname or self.classname
   theme.LoadThemeDefaults(obj)
   SkinHandler.LoadSkin(obj, self)
 
@@ -126,9 +133,20 @@ function Control:New(obj)
     obj.height = obj.clientHeight + p[2] + p[4]
   end
 
-  --// create font
-  obj.font = Font:New(obj.font)
-  obj.font:SetParent(obj)
+  -- We don't create fonts for controls that don't need them
+  -- This should drastically use memory usage for some cases
+  if not obj.__nofont then
+    --// create font
+    obj.font = Font:New(obj.font)
+    obj.font:SetParent(obj)
+
+    --// create disabled font
+    obj.disabledFont = Font:New(obj.disabledFont)
+    obj.disabledFont:SetParent(obj)
+  else
+    obj.font = nil
+    obj.disabledFont = nil
+  end
 
   obj:DetectRelativeBounds()
   obj:AlignControl()
@@ -171,7 +189,11 @@ function Control:Dispose(...)
   end
 
   inherited.Dispose(self,...)
-  self.font:SetParent()
+
+  if not self.__nofont then
+    self.font:SetParent()
+    self.disabledFont:SetParent()
+  end
 end
 
 --//=============================================================================
@@ -346,6 +368,13 @@ function Control:GetRelativeBox(savespace)
   return {left, top, width, height}
 end
 
+--//=============================================================================
+
+function Control:SetEnabled(enabled)
+    self.state.enabled = enabled
+    self:CallListeners(self.OnEnableChanged, not self.state.enabled)
+    self:Invalidate()
+end
 
 --//=============================================================================
 
@@ -373,7 +402,7 @@ function Control:UpdateClientArea(dontRedraw)
   end
 
   if not dontRedraw then self:Invalidate() end --FIXME only when RTT!
-  self:CallListeners(self.OnResize) --FIXME more arguments and filter unchanged resizes
+  self:CallListeners(self.OnResize, self.clientWidth, self.clientHeight) --FIXME more arguments and filter unchanged resizes
 end
 
 
@@ -641,7 +670,7 @@ function Control:SetPosRelative(x, y, w, h, clientArea, dontUpdateRelative)
   end
 end
 
---- Resize the control 
+--- Resize the control
 -- @int w width
 -- @int h height
 -- @param clientArea TODO
@@ -1111,6 +1140,11 @@ end
 
 
 function Control:IsInView()
+    -- FIXME: This is a workaround for the RTT bug, but probably not placed in
+    -- the right spot and might cause some other issues/not be optimal
+    if self.useRTT then
+        return true
+    end
 	if UnlinkSafe(self.parent) then
 		return self.parent:IsRectInView(self.x, self.y, self.width, self.height)
 	end
@@ -1495,17 +1529,6 @@ function Control:MouseWheel(x, y, ...)
   local cx,cy = self:LocalToClient(x,y)
   return inherited.MouseWheel(self, cx, cy, ...)
 end
-
---[[
-function Control:KeyPress(...)
-  return inherited.KeyPress(self, ...)
-end
-
-
-function Control:TextInput(...)
-  return inherited.TextInput(self, ...)
-end
---]]
 
 
 function Control:FocusUpdate(...)

@@ -1,64 +1,46 @@
 --//=============================================================================
 
---- TabPanel module
+--- DetachableTabPanel module (based on TabPanel)
 
---- TabPanel fields.
+--- DetachableTabPanel fields.
 -- Inherits from LayoutPanel.
 -- @see layoutpanel.LayoutPanel
--- @table TabPanel
+-- @table DetachableTabPanel
 -- @tparam {tab1,tab2,...} tabs contained in the tab panel, each tab has a .name (string) and a .children field (table of Controls)(default {})
 -- @tparam chili.Control currentTab currently visible tab
-TabPanel = LayoutPanel:Inherit{
-  classname     = "tabpanel",
+DetachableTabPanel = LayoutPanel:Inherit{
+  classname     = "detachabletabpanel",
   orientation   = "vertical",
   resizeItems   = false,
-  scrollTabs    = false, -- NB: Requires the .tabbar to be explicitly resized due to autosize bug
   itemPadding   = {0, 0, 0, 0},
   itemMargin    = {0, 0, 0, 0},
-  barHeight     = 40,
   tabs          = {},
   currentTab    = {},
   OnTabChange   = {},
+  OnTabClick    = {},
 }
 
-local this = TabPanel
+local this = DetachableTabPanel
 local inherited = this.inherited
 
 --//=============================================================================
 
-function TabPanel:New(obj)
+function DetachableTabPanel:New(obj)
 	obj = inherited.New(self,obj)
-
-	obj.tabbar = TabBar:New {
+	
+	obj.tabBar = TabBar:New {
 		tabs = obj.tabs,
 		x = 0,
 		y = 0,
-		width = "100%",
-		height = obj.barHeight,
+		right = 0,
+		bottom = 0,
+		minItemWidth = obj.minTabWidth,
+		padding = {0, 0, 0, 0},
 	}
-	if obj.scrollTabs then
-		local tabScrollPanel = ScrollPanel:New {
-			x = 0,
-			right = 0,
-			y = 0,
-			height = obj.barHeight,
-			padding = {0,0,0,0},
-			borderColor = {0,0,0,0},
-			backgroundColor = {0,0,0,0},
-			verticalScrollbar = false,
-			scrollbarSize = 5,
-			children = {
-				obj.tabbar
-			}
-		}
-		obj:AddChild(tabScrollPanel)
-	else
-		obj:AddChild(obj.tabbar)
-	end
-
+  
 	obj.currentTab = Control:New {
 		x = 0,
-		y = obj.barHeight,
+		y = 0,
 		right = 0,
 		bottom = 0,
 		padding = {0, 0, 0, 0},
@@ -66,7 +48,7 @@ function TabPanel:New(obj)
 	obj:AddChild(obj.currentTab)
 	obj.tabIndexMapping = {}
 	for i=1, #obj.tabs do
-		local tabName = obj.tabs[i].name
+		local tabName = obj.tabs[i].name	
 		local tabFrame = Control:New {
 			padding = {0, 0, 0, 0},
 			x = 0,
@@ -83,14 +65,15 @@ function TabPanel:New(obj)
 			tabFrame:SetVisibility(false)
 		end
 	end
-	obj.tabbar.OnChange = { function(tabbar, tabname) obj:ChangeTab(tabname) end }
+	obj.tabBar.OnChange = { function(tabbar, tabname) obj:ChangeTab(tabname) end }
 	return obj
 end
 
-function TabPanel:AddTab(tab, neverSwitchTab)
-	local switchToTab = (#self.tabbar.children == 0) and not neverSwitchTab
-    self.tabbar:AddChild(
-        TabBarItem:New{name = tab.name, caption = tab.caption or tab.name, defaultWidth = self.tabbar.minItemWidth, defaultHeight = self.tabbar.minItemHeight} --FIXME: implement an "Add Tab in TabBar too"
+function DetachableTabPanel:AddTab(tab, neverSwitchTab)
+    local tabbar = self.tabBar
+	local switchTab = (#tabbar.children == 0) or (not neverSwitchTab)
+    tabbar:AddChild(
+        TabBarItem:New{name = tab.name, caption = tab.caption or tab.name, font = tab.font, defaultWidth = tabbar.minItemWidth, defaultHeight = tabbar.minItemHeight} --FIXME: implement an "Add Tab in TabBar too"
     )
     local tabFrame = Control:New {
         padding = {0, 0, 0, 0},
@@ -103,31 +86,31 @@ function TabPanel:AddTab(tab, neverSwitchTab)
     self.tabIndexMapping[tab.name] = tabFrame
     self.currentTab:AddChild(tabFrame)
     tabFrame:SetVisibility(false)
-	if switchToTab then
-		self:ChangeTab(tab.name)
+	if switchTab then
+		self.tabBar:Select(tab.name)
 	end
 end
 
-function TabPanel:RemoveTab(name)
+function DetachableTabPanel:RemoveTab(name, updateSelection)
     if self.currentFrame == self.tabIndexMapping[name] then
 		self.currentFrame = nil
 	end
-    self.tabbar:Remove(name)
+	self.tabBar:Remove(name, updateSelection)
     self.currentTab:RemoveChild(self.tabIndexMapping[name])
     self.tabIndexMapping[name] = nil
 end
 
-function TabPanel:GetTab(tabname)
+function DetachableTabPanel:GetTab(tabname)
     if not tabname or not self.tabIndexMapping[tabname] then
 		return false
 	end
 	return self.tabIndexMapping[tabname]
 end
 
-
 --//=============================================================================
 
-function TabPanel:ChangeTab(tabname)
+function DetachableTabPanel:ChangeTab(tabname)
+	self:CallListeners(self.OnTabClick, tabname)
 	if not tabname or not self.tabIndexMapping[tabname] then
 		return
 	end
@@ -141,4 +124,5 @@ function TabPanel:ChangeTab(tabname)
 	self.currentFrame:SetVisibility(true)
 	self:CallListeners(self.OnTabChange, tabname)
 end
+
 --//=============================================================================

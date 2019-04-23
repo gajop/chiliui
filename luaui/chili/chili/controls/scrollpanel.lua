@@ -24,9 +24,9 @@ ScrollPanel = Control:Inherit{
   scrollPosY    = 0,
   verticalScrollbar   = true,
   horizontalScrollbar = true,
-  verticalSmartScroll = false, 
+  verticalSmartScroll = false,
   smoothScroll     = true,
-  smoothScrollTime = 0.7, 
+  smoothScrollTime = 0.7,
   ignoreMouseWheel = false,
 }
 
@@ -133,6 +133,8 @@ end
 --//=============================================================================
 
 function ScrollPanel:GetCurrentExtents()
+  local minLeft, minTop, maxRight, maxBottom = self:GetChildrenCurrentExtents()
+
   local left = self.x
   local top  = self.y
   local right  = self.x + self.width

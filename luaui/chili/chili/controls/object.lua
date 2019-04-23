@@ -52,9 +52,12 @@ Object = {
   OnFocusUpdate   = {},
   OnHide          = {},
   OnShow          = {},
+  OnOrphan        = {},
+  OnParent        = {},
+  OnParentPost    = {}, -- Called after parent is set
 
   disableChildrenHitTest = false, --// if set childrens are not clickable/draggable etc - their mouse events are not processed
-} 
+}
 
 do
   local __lowerkeys = {}
@@ -72,7 +75,7 @@ local inherited = this.inherited
 --//=============================================================================
 --// used to generate unique objects names
 
-local cic = {} 
+local cic = {}
 local function GetUniqueId(classname)
   local ci = cic[classname] or 0
   cic[classname] = ci + 1
@@ -120,8 +123,9 @@ function Object:New(obj)
         if (t=="metatable") then
           setmetatable(obj[i], getmetatable(v))
         end
-      elseif (ot == "nil") then
-        obj[i] = v
+      -- We don't need to copy other types
+    --   elseif (ot == "nil") then
+    --       obj[i] = v
       end
     end
   end
@@ -157,32 +161,39 @@ end
 -- TODO: use scream, in case the user forgets.
 -- nil -> nil
 function Object:Dispose(_internal)
-  if (not self.disposed) then
+  if self.disposed then
+    return
+  end
 
-    --// check if the control is still referenced (if so it would indicate a bug in chili's gc)
-    if _internal then
-      if self._hlinks and next(self._hlinks) then
-        local hlinks_cnt = table.size(self._hlinks)
-        local i,v = next(self._hlinks)
-        if hlinks_cnt > 1 or (v ~= self) then --// check if user called Dispose() directly
-          Spring.Log("Chili", "error", ("Tried to dispose \"%s\"! It's still referenced %i times!"):format(self.name, hlinks_cnt))
-        end
+  --// check if the control is still referenced (if so it would indicate a bug in chili's gc)
+  if _internal then
+    if self._hlinks and next(self._hlinks) then
+      local hlinks_cnt = table.size(self._hlinks)
+      local i,v = next(self._hlinks)
+      if hlinks_cnt > 1 or (v ~= self) then --// check if user called Dispose() directly
+        Spring.Log("Chili", "error", ("Tried to dispose \"%s\"! It's still referenced %i times!"):format(self.name, hlinks_cnt))
       end
     end
- 
-    self:CallListeners(self.OnDispose)
-
-    self.disposed = true
-
-    TaskHandler.RemoveObject(self)
-    --DebugHandler:UnregisterObject(self) --// not needed
-
-    if (UnlinkSafe(self.parent)) then
-      self.parent:RemoveChild(self)
-    end
-    self:SetParent(nil)
-    self:ClearChildren()
   end
+
+  if self.state and self.state.focused then
+    local screenCtrl = self:FindParent("screen")
+    if screenCtrl then
+      screenCtrl:FocusControl(nil)
+    end
+  end
+
+  self:CallListeners(self.OnDispose)
+  self.disposed = true
+
+  TaskHandler.RemoveObject(self)
+  --DebugHandler:UnregisterObject(self) --// not needed
+
+  if UnlinkSafe(self.parent) then
+    self.parent:RemoveChild(self)
+  end
+  self:SetParent(nil)
+  self:ClearChildren()
 end
 
 
@@ -202,7 +213,7 @@ function Object:Inherit(class)
   class.inherited = self
 
   for i,v in pairs(self) do
-    if (class[i] == nil)and(i ~= "inherited")and(i ~= "__lowerkeys") then
+    if (class[i] == nil) and (i ~= "inherited") and (i ~= "__lowerkeys") then
       t = type(v)
       if (t == "table") --[[or(t=="metatable")--]] then
         class[i] = table.shallowcopy(v)
@@ -215,7 +226,7 @@ function Object:Inherit(class)
   local __lowerkeys = {}
   class.__lowerkeys = __lowerkeys
   for i,v in pairs(class) do
-    if (type(i)=="string") then
+    if type(i) == "string" then
       __lowerkeys[i:lower()] = i
     end
   end
@@ -224,8 +235,8 @@ function Object:Inherit(class)
 
   --// backward compability with old DrawControl gl state (change was done with v2.1)
   local w = DebugHandler.GetWidgetOrigin()
-  if (w ~= widget)and(w ~= Chili) then
-	class._hasCustomDrawControl = true
+  if (w ~= widget) and (w ~= Chili) then
+    class._hasCustomDrawControl = true
   end
 
   return class
@@ -239,14 +250,24 @@ function Object:SetParent(obj)
   obj = UnlinkSafe(obj)
   local typ = type(obj)
 
-  if (typ ~= "table") then
+  if typ ~= "table" then
     self.parent = nil
+    self:CallListeners(self.OnOrphan, self)
     return
   end
+
+  self:CallListeners(self.OnParent, self)
+
+  -- Children always appear to visible when they recieve new parents because they
+  -- are added to the visible child list.
+  self.visible = true
+  self.hidden = false
 
   self.parent = MakeWeakLink(obj, self.parent)
 
   self:Invalidate()
+
+  self:CallListeners(self.OnParentPost, self)
 end
 
 --- Adds the child object
@@ -346,7 +367,7 @@ function Object:ClearChildren()
   local old = self.preserveChildrenOrder
   self.preserveChildrenOrder = false
 
-  --// remove all children  
+  --// remove all children
     for c in pairs(self.children_hidden) do
       self:ShowChild(c)
     end
@@ -448,31 +469,40 @@ end
 --- Sets the visibility of the object
 -- @bool visible visibility status
 function Object:SetVisibility(visible)
-  if (visible) then
+  if self.visible == visible then
+    return
+  end
+
+  if visible then
     self.parent:ShowChild(self)
   else
     self.parent:HideChild(self)
   end
   self.visible = visible
   self.hidden  = not visible
-end
 
---- Hides the objects
-function Object:Hide()
-  local wasHidden = self.hidden
-  self:SetVisibility(false)
-  if not wasHidden then
+  if not visible and self.state and self.state.focused then
+    local screenCtrl = self:FindParent("screen")
+    if screenCtrl then
+      screenCtrl:FocusControl(nil)
+    end
+  end
+
+  if visible then
+    self:CallListeners(self.OnShow, self)
+  else
     self:CallListeners(self.OnHide, self)
   end
 end
 
+--- Hides the objects
+function Object:Hide()
+  self:SetVisibility(false)
+end
+
 --- Makes the object visible
 function Object:Show()
-  local wasVisible = self.hidden
   self:SetVisibility(true)
-  if not wasVisible then
-    self:CallListeners(self.OnShow, self)
-  end
 end
 
 --- Toggles object visibility
@@ -485,6 +515,10 @@ end
 function Object:SetChildLayer(child,layer)
   child = UnlinkSafe(child)
   local children = self.children
+
+  if layer < 0 then
+    layer = layer + #children + 1
+  end
 
   layer = math.min(layer, #children)
 
@@ -501,11 +535,14 @@ end
 
 
 function Object:SetLayer(layer)
-  if (self.parent) then
-    (self.parent):SetChildLayer(self, layer)
+  if self.parent ~= nil then
+    self.parent:SetChildLayer(self, layer)
   end
 end
 
+function Object:SendToBack()
+  self:SetLayer(-1)
+end
 
 function Object:BringToFront()
   self:SetLayer(1)
@@ -514,7 +551,7 @@ end
 --//=============================================================================
 
 function Object:InheritsFrom(classname)
-  if (self.classname == classname) then
+  if self.classname == classname then
     return true
   elseif not self.inherited then
     return false
@@ -579,14 +616,14 @@ function Object:GetObjectByName(name)
 end
 
 
---// Climbs the family tree and returns the first parent that satisfies a 
+--// Climbs the family tree and returns the first parent that satisfies a
 --// predicate function or inherites the given class.
 --// Returns nil if not found.
 function Object:FindParent(predicate)
   if not self.parent then
     return -- not parent with such class name found, return nil
   elseif (type(predicate) == "string" and (self.parent):InheritsFrom(predicate)) or
-         (type(predicate) == "function" and predicate(self.parent)) then 
+         (type(predicate) == "function" and predicate(self.parent)) then
     return self.parent
   else
     return self.parent:FindParent(predicate)
@@ -786,6 +823,17 @@ function Object:LocalToClient(x,y)
   return x,y
 end
 
+-- LocalToScreen does not do what it says it does because
+-- self:LocalToParent(x,y) = 2*self.x, 2*self.y
+-- However, too much chili depends on the current LocalToScreen
+-- so this working version exists for widgets.
+function Object:CorrectlyImplementedLocalToScreen(x,y)
+  if (not self.parent) then
+    return x,y
+  end
+  return (self.parent):ClientToScreen(x,y)
+end
+
 
 function Object:LocalToScreen(x,y)
   if (not self.parent) then
@@ -831,6 +879,14 @@ function Object:LocalToObject(x, y, obj)
   return self.parent:LocalToObject(x, y, obj)
 end
 
+
+function Object:IsVisibleOnScreen()
+  if (not self.parent) or (not self.visible) then
+    return false
+  end
+  return (self.parent):IsVisibleOnScreen()
+end
+
 --//=============================================================================
 
 function Object:_GetMaxChildConstraints(child)
@@ -841,7 +897,7 @@ end
 
 
 function Object:HitTest(x,y)
-  if not self.disableChildrenHitTest then 
+  if not self.disableChildrenHitTest then
     local children = self.children
     for i=1,#children do
       local c = children[i]
@@ -855,7 +911,7 @@ function Object:HitTest(x,y)
         end
       end
     end
-  end 
+  end
 
   return false
 end
@@ -961,4 +1017,3 @@ function Object:FocusUpdate(...)
 end
 
 --//=============================================================================
-

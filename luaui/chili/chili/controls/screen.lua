@@ -119,6 +119,10 @@ function Screen:IsRectInView(x,y,w,h)
 end
 
 
+function Screen:IsVisibleOnScreen()
+  return true
+end
+
 --//=============================================================================
 
 function Screen:Resize(w,h)
@@ -137,6 +141,22 @@ function Screen:Update(...)
 	local activeControl = UnlinkSafe(self.activeControl)
 	if hoveredControl and (not activeControl) then
 		local x, y = Spring.GetMouseState()
+		if math.abs(x - self.width/2) <= 1 and math.abs(y - self.height/2) <= 1 then
+			-- Do not register a hit if the mouse is not hovered over Spring
+			-- See https://springrts.com/mantis/view.php?id=5311
+			if self.currentTooltip then
+				self.currentTooltip = nil
+			end
+			if self.activeControl then
+				self.activeControl:MouseOut()
+				self.activeControl = nil
+			end
+			if self.hoveredControl then
+				self.hoveredControl:MouseOut()
+				self.hoveredControl = nil
+			end
+			return
+		end
 		y = select(2,gl.GetViewSizes()) - y
 		local cx,cy = hoveredControl:ScreenToLocal(x, y)
 		hoveredControl:MouseMove(cx, cy, 0, 0)
@@ -145,11 +165,11 @@ end
 
 
 function Screen:IsAbove(x,y,...)
-  local activeControl = UnlinkSafe(self.activeControl)
-  if activeControl then
-    return true
+  if math.abs(x - self.width/2) <= 1 and math.abs(y - self.height/2) <= 1 then
+    -- Do not register a hit if the mouse is not hovered over Spring
+    -- See https://springrts.com/mantis/view.php?id=5311
+    return
   end
-
   y = select(2,gl.GetViewSizes()) - y
   local hoveredControl = inherited.IsAbove(self,x,y,...)
 
@@ -183,18 +203,23 @@ end
 
 function Screen:FocusControl(control)
   --UnlinkSafe(self.activeControl)
-  if not CompareLinks(control, self.focusedControl) then
-      local focusedControl = UnlinkSafe(self.focusedControl)
-      if focusedControl then
-          focusedControl.state.focused = false
-          focusedControl:FocusUpdate() --rename FocusLost()
-      end
-      self.focusedControl = nil
-      if control then
-          self.focusedControl = MakeWeakLink(control, self.focusedControl)
-          self.focusedControl.state.focused = true
-          self.focusedControl:FocusUpdate() --rename FocusGain()
-      end
+  if CompareLinks(control, self.focusedControl) then
+    return
+  end
+
+  local focusedControl = UnlinkSafe(self.focusedControl)
+  if focusedControl then
+    focusedControl.state.focused = false
+    focusedControl:FocusUpdate() --rename FocusLost()
+  end
+  self.focusedControl = nil
+  if control then
+    self.focusedControl = MakeWeakLink(control, self.focusedControl)
+    self.focusedControl.state.focused = true
+    if self.focusedControl.hidden then
+      self.focusedControl:Show()
+    end
+    self.focusedControl:FocusUpdate() --rename FocusGain()
   end
 end
 
