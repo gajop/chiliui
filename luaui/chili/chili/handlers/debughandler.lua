@@ -124,7 +124,7 @@ local function ChiliErrorHandler(msg,...)
     lastError = os.clock()
 
     --// unload Chili to avoid error spam
-    if numChiliErrors>=DebugHandler.maxChiliErrors and DebugHandler.removeWidgets then
+    if (numChiliErrors>=DebugHandler.maxChiliErrors) then
       Spring.Log("Chili", "error", "Removed widget: " .. widget.whInfo.name)
       widgetHandler:RemoveWidget(widget)
     end

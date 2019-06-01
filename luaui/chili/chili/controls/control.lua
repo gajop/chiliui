@@ -50,6 +50,7 @@ Control = Object:Inherit{
 
   fixedRatio      = false,
   tooltip         = nil, --// JUST TEXT
+  greedyHitText   = false, --// Enable to do hit test if the control has any mouse events.
 
   font = {
     font          = "FreeSansBold.otf",
@@ -96,6 +97,11 @@ local inherited = this.inherited
 function Control:New(obj)
   --// backward compability
   BackwardCompa(obj)
+  
+  --//minimum size from minimum size table when minWidth & minHeight is not set (backward compatibility)
+  local minimumSize = obj.minimumSize or {} 
+  obj.minWidth = obj.minWidth or minimumSize[1] 
+  obj.minHeight = obj.minHeight or minimumSize[2]
 
   if obj.DrawControl then
     obj._hasCustomDrawControl = true
@@ -125,6 +131,10 @@ function Control:New(obj)
     end
   end
 
+  if obj.checkFileExists and ((not obj.file) or VFS.FileExists(obj.file)) and ((not obj.file2) or VFS.FileExists(obj.file2)) then
+    obj.checkFileExists = false
+  end
+  
   local p = obj.padding
   if (obj.clientWidth) then
     obj.width = obj.clientWidth + p[1] + p[3]
@@ -163,14 +173,18 @@ end
 
 --- Removes the control.
 function Control:Dispose(...)
-  gl.DeleteList(self._all_dlist)
-  self._all_dlist = nil
-
-  gl.DeleteList(self._children_dlist)
-  self._children_dlist = nil
-
-  gl.DeleteList(self._own_dlist)
-  self._own_dlist = nil
+  if (self._all_dlist) then
+    gl.DeleteList(self._all_dlist)
+    self._all_dlist = nil
+  end
+  if (self._children_dlist) then
+    gl.DeleteList(self._children_dlist)
+    self._children_dlist = nil
+  end
+  if (self._own_dlist) then
+    gl.DeleteList(self._own_dlist)
+    self._own_dlist = nil
+  end
 
   gl.DeleteTexture(self._tex_all)
   self._tex_all = nil
@@ -191,8 +205,12 @@ function Control:Dispose(...)
   inherited.Dispose(self,...)
 
   if not self.__nofont then
-    self.font:SetParent()
-    self.disabledFont:SetParent()
+    if self.font.SetParent then
+      self.font:SetParent()
+      self.disabledFont:SetParent()
+    else
+      Spring.Echo("nil self.font:SetParent", self.name)
+    end
   end
 end
 
@@ -208,8 +226,8 @@ end
 --- Adds a child object to the control
 -- @tparam object.Object obj child object
 -- @param dontUpdate if true won't trigger a RequestRealign()
-function Control:AddChild(obj, dontUpdate)
-  inherited.AddChild(self,obj)
+function Control:AddChild(obj, dontUpdate, index)
+  inherited.AddChild(self,obj, dontUpdate, index)
   if (not dontUpdate) then
     self:RequestRealign()
   end
@@ -322,7 +340,7 @@ function Control:GetRelativeBox(savespace)
   end
 
   local p = self.parent
-  if (not p) then
+  if not p or not UnlinkSafe(p) then
     return t
   end
 
@@ -395,14 +413,19 @@ function Control:UpdateClientArea(dontRedraw)
     --FIXME sometimes this makes self:RequestRealign() redundant! try to reduce the Align() calls somehow
     self.parent:RequestRealign()
   end
+  local needResize = false
   if (self.width ~= self._oldwidth_uca)or(self.height ~= self._oldheight_uca) then
     self:RequestRealign()
+    needResize = true
     self._oldwidth_uca  = self.width
     self._oldheight_uca = self.height
   end
 
   if not dontRedraw then self:Invalidate() end --FIXME only when RTT!
-  self:CallListeners(self.OnResize, self.clientWidth, self.clientHeight) --FIXME more arguments and filter unchanged resizes
+  
+  if needResize then
+    self:CallListeners(self.OnResize, self.clientWidth, self.clientHeight)
+  end
 end
 
 
@@ -549,7 +572,7 @@ function Control:SetPos(x, y, w, h, clientArea, dontUpdateRelative)
         self._relativeBounds.width = IsRelativeCoord(w) and w
         self._givenBounds.width = w
         changed = true
-	redraw  = true
+        redraw  = true
       end
     end
   end
@@ -568,7 +591,7 @@ function Control:SetPos(x, y, w, h, clientArea, dontUpdateRelative)
         self._relativeBounds.height = IsRelativeCoord(h) and h
         self._givenBounds.height = h
         changed = true
-	redraw  = true
+        redraw  = true
       end
     end
   end
@@ -941,7 +964,7 @@ end
 
 
 function Control:_UpdateOwnDList()
-	if not self.parent then return end
+	if not self.parent or not UnlinkSafe(self.parent) then return end
 	if not self:IsInView() then return end
 	if not self.useDLists then return end
 
@@ -951,7 +974,7 @@ end
 
 
 function Control:_UpdateChildrenDList()
-	if not self.parent then return end
+	if not self.parent or not UnlinkSafe(self.parent) then return end
 	if not self:IsInView() then return end
 
 	if self:InheritsFrom("scrollpanel") and not self._cantUseRTT then
@@ -968,7 +991,7 @@ end
 
 
 function Control:_UpdateAllDList()
-	if not self.parent then return end
+	if not self.parent or not UnlinkSafe(self.parent) then return end
 	if not self:IsInView() then return end
 
 	local RTT = self:_CheckIfRTTisAppreciated()
@@ -1124,10 +1147,14 @@ end
 function Control:_DrawInClientArea(fnc,...)
 	local clientX,clientY,clientWidth,clientHeight = unpack4(self.clientArea)
 
+	if WG.uiScale and WG.uiScale ~= 1 then
+		clientWidth, clientHeight = clientWidth*WG.uiScale, clientHeight*WG.uiScale
+	end
+	
 	gl.PushMatrix()
 	gl.Translate(clientX, clientY, 0)
 
-	local sx,sy = self:LocalToScreen(clientX,clientY)
+	local sx,sy = self:UnscaledLocalToScreen(clientX,clientY)
 	sy = select(2,gl.GetViewSizes()) - (sy + clientHeight)
 
 	if PushLimitRenderRegion(self, sx, sy, clientWidth, clientHeight) then
@@ -1158,7 +1185,7 @@ end
 
 
 function Control:IsRectInView(x,y,w,h)
-	if (not self.parent) then
+	if not self.parent or not UnlinkSafe(self.parent) then
 		return false
 	end
 
@@ -1189,42 +1216,47 @@ end
 
 --//FIXME move resize and drag to Window class!!!!
 function Control:DrawBackground()
-	--// gets overriden by the skin/theme
+  --// gets overriden by the skin/theme
 end
 
 function Control:DrawDragGrip()
-	--// gets overriden by the skin/theme
+  --// gets overriden by the skin/theme
 end
 
 function Control:DrawResizeGrip()
-	--// gets overriden by the skin/theme
+  --// gets overriden by the skin/theme
 end
 
 function Control:DrawBorder()
-	--// gets overriden by the skin/theme ??????
+  --// gets overriden by the skin/theme ??????
 end
 
 
 function Control:DrawGrips() -- FIXME this thing is a hack, fix it - todo ideally make grips appear only when mouse hovering over it
-	local drawResizeGrip = self.resizable
-	local drawDragGrip   = self.draggable and self.dragUseGrip
-	--[[if IsTweakMode() then
-	drawResizeGrip = drawResizeGrip or self.tweakResizable
-	drawDragGrip   = (self.tweakDraggable and self.tweakDragUseGrip)
-	end--]]
+  local drawResizeGrip = self.resizable
+  local drawDragGrip   = self.draggable and self.dragUseGrip
+  --[[if IsTweakMode() then
+    drawResizeGrip = drawResizeGrip or self.tweakResizable
+    drawDragGrip   = (self.tweakDraggable and self.tweakDragUseGrip)
+  end--]]
 
-	if drawResizeGrip then
-		self:DrawResizeGrip()
-	end
-	if drawDragGrip then
-		self:DrawDragGrip()
-	end
+  if drawResizeGrip then
+    self:DrawResizeGrip()
+  end
+  if drawDragGrip then
+    self:DrawDragGrip()
+  end
 end
 
 
 function Control:DrawControl()
-	self:DrawBackground()
-	self:DrawBorder()
+  --//an option to make panel position snap to an integer
+  if self.snapToGrid then 
+    self.x = math.floor(self.x) + 0.5 
+    self.y = math.floor(self.y) + 0.5 
+  end 
+  self:DrawBackground()
+  self:DrawBorder()
 end
 
 
@@ -1267,6 +1299,10 @@ function Control:DrawForList()
 	end
 
 	local clientX,clientY,clientWidth,clientHeight = unpack4(self.clientArea)
+	if WG.uiScale and WG.uiScale ~= 1 then
+		clientWidth, clientHeight = clientWidth*WG.uiScale, clientHeight*WG.uiScale
+	end
+	
 	if (clientWidth > 0)and(clientHeight > 0) then
 		if (self._tex_children) then
 			gl.BlendFuncSeparate(GL.ONE, GL.SRC_ALPHA, GL.ZERO, GL.SRC_ALPHA)
@@ -1351,23 +1387,23 @@ end
 
 
 function Control:TweakDraw()
-	if (next(self.children)) then
-		self:_DrawChildrenInClientArea('TweakDraw')
-	end
+  if (next(self.children)) then
+    self:_DrawChildrenInClientArea('TweakDraw')
+  end
 end
 
 
 function Control:DrawChildren()
-	if (next(self.children)) then
-		self:_DrawChildrenInClientArea('Draw')
-	end
+  if (next(self.children)) then
+    self:_DrawChildrenInClientArea('Draw')
+  end
 end
 
 
 function Control:DrawChildrenForList()
-	if (next(self.children)) then
-		self:_DrawChildrenInClientAreaWithoutViewCheck('DrawForList')
-	end
+  if (next(self.children)) then
+    self:_DrawChildrenInClientAreaWithoutViewCheck('DrawForList')
+  end
 end
 
 --//=============================================================================
@@ -1394,6 +1430,10 @@ function Control:HitTest(x,y)
           end
         end
       end
+      --//an option that allow you to mouse click on empty panel
+      if self.hitTestAllowEmpty then 
+        return self 
+      end
     end
   end
 
@@ -1404,15 +1444,14 @@ function Control:HitTest(x,y)
     end
   end
 
-  if
-	self.tooltip
-	or (#self.OnMouseDown > 0)
-	or (#self.OnMouseUp > 0)
-	or (#self.OnClick > 0)
-	or (#self.OnDblClick > 0)
-	or (#self.OnMouseMove > 0)
-	or (#self.OnMouseWheel > 0)
-  then
+  if (self.noClickThrough and not IsTweakMode()) or (self.greedyHitText and (
+		(self.tooltip)
+		or (#self.OnMouseDown > 0)
+		or (#self.OnMouseUp > 0)
+		or (#self.OnClick > 0)
+		or (#self.OnDblClick > 0)
+		or (#self.OnMouseMove > 0)
+		or (#self.OnMouseWheel > 0))) then
     return self
   end
 
@@ -1443,6 +1482,10 @@ function Control:MouseDown(x, y, ...)
     if (result) then
       return result
     end
+  end
+
+  if self.noClickThrough and not IsTweakMode() then
+    return self
   end
 end
 

@@ -26,7 +26,7 @@ end
 local _DrawTextureAspect = _DrawTextureAspect
 
 
-function _DrawTiledTexture(x,y,w,h, skLeft,skTop,skRight,skBottom, texw,texh, texIndex)
+function _DrawTiledTexture(x,y,w,h, skLeft,skTop,skRight,skBottom, texw,texh, texIndex, disableTiling)
     texIndex = texIndex or 0
 
     local txLeft   = skLeft/texw
@@ -39,7 +39,7 @@ function _DrawTiledTexture(x,y,w,h, skLeft,skTop,skRight,skBottom, texw,texh, te
     local scaleY = h/(skTop+skBottom)
     local scaleX = w/(skLeft+skRight)
     local scale = (scaleX < scaleY) and scaleX or scaleY
-    if (scale<1) then
+    if disableTiling or (scale<1) then
       skTop = skTop * scale
       skBottom = skBottom * scale
       skLeft = skLeft * scale
@@ -509,7 +509,7 @@ function DrawRepeatingTiledWindow(obj)
   gl.Texture(0,false)
 
   if (obj.caption) then
-    _GetControlFont(obj):Print(obj.caption, w*0.5, 9, "center")
+     _GetControlFont(obj):Print(obj.caption, w*0.5, 9, "center")
   end
 end
 
@@ -525,16 +525,15 @@ function DrawButton(obj)
   local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
   local bgcolor = obj.backgroundColor
-  if obj.state.pressed then
-    bgcolor = mulColor(bgcolor, 0.4)
-  elseif not obj.state.enabled then
-    bgcolor = mixColors(bgcolor, obj.disabledColor, 0.8)
-    --bgcolor = mulColor(bgcolor, 0.2)
-  elseif obj.state.hovered --[[ or (obj.state.focused)]] then
-    bgcolor = obj.focusColor
-    --bgcolor = mixColors(bgcolor, obj.focusColor, 0.5)
-  elseif obj.state.selected then
-    bgcolor = obj.selectedColor
+  if not obj.supressButtonReaction then
+    if (obj.state.pressed) then
+      bgcolor = obj.pressBackgroundColor or mulColor(bgcolor, 0.4)
+    elseif (obj.state.hovered) --[[ or (obj.state.focused)]] then
+      bgcolor = obj.focusColor
+      --bgcolor = mixColors(bgcolor, obj.focusColor, 0.5)
+    elseif obj.state.selected then
+      bgcolor = obj.selectedColor
+    end
   end
   gl.Color(bgcolor)
 
@@ -542,16 +541,18 @@ function DrawButton(obj)
     local texInfo = gl.TextureInfo(obj.TileImageBK) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
 
-    gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, 0,0,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
+    gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, 0,0,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0, obj.disableTiling)
   --gl.Texture(0,false)
 
   local fgcolor = obj.borderColor
-  if (obj.state.pressed) then
-    fgcolor = mulColor(fgcolor, 0.4)
-  elseif not obj.state.enabled then
+  if not obj.state.enabled then
     fgcolor = mixColors(fgcolor, obj.disabledColor, 0.8)
-  elseif (obj.state.hovered) --[[ or (obj.state.focused)]] then
-    fgcolor = obj.focusColor
+  elseif not obj.supressButtonReaction then
+    if (obj.state.pressed) then
+      fgcolor = obj.pressForegroundColor or mulColor(fgcolor, 0.4)
+    elseif (obj.state.hovered) --[[ or (obj.state.focused)]] then
+      fgcolor = obj.focusColor
+    end
   end
   gl.Color(fgcolor)
 
@@ -559,12 +560,12 @@ function DrawButton(obj)
     local texInfo = gl.TextureInfo(obj.TileImageFG) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
 
-    gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, 0,0,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
+    gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, 0,0,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0, obj.disableTiling)
   gl.Texture(0,false)
 
-  if obj.caption then
-    local cx, cy, cw, ch = unpack4(obj.clientArea)
-    _GetControlFont(obj):DrawInBox(obj.caption, cx, cy, cw, ch, obj.align, obj.valign)
+  if (obj.caption) then
+    local font = _GetControlFont(obj)
+    font:Print(obj.caption, w*0.5 + (obj.captionHorAlign or 0), math.floor(h*0.5 - font.size*0.35) + (obj.captionAlign or 0), "center", "linecenter")
   end
 end
 
@@ -605,11 +606,14 @@ function DrawEditBox(obj)
 	gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, 0, 0, obj.width, obj.height,  skLeft,skTop,skRight,skBottom, tw,th)
 	gl.Texture(0,false)
 
-	local text = obj.text
+	local text = obj.text and tostring(obj.text)
+    if text and obj.textEditing then
+        text = text .. obj.textEditing
+    end
 	local font = _GetControlFont(obj)
 	local displayHint = false
 
-	if text == "" and not obj.state.focused and obj.state.enabled then
+	if text == "" and not obj.state.focused then
 		text = obj.hint
 		displayHint = true
 		font = obj.hintFont
@@ -620,31 +624,35 @@ function DrawEditBox(obj)
             text = string.rep("*", #text)
         end
 
-		if (obj.offset > obj.cursor) and not obj.multiline then
-			obj.offset = obj.cursor
+        local cursor = obj.cursor
+        if obj.textEditing then
+            cursor = cursor + #obj.textEditing
+        end
+		if (obj.offset > cursor) and not obj.multiline then
+			obj.offset = cursor
 		end
 
 		local clientX,clientY,clientWidth,clientHeight = unpack4(obj.clientArea)
 
 		if not obj.multiline then
-      --// make cursor pos always visible (when text is longer than editbox!)
+			--// make cursor pos always visible (when text is longer than editbox!)
 			repeat
-				local txt = text:sub(obj.offset, obj.cursor)
+				local txt = text:sub(obj.offset, cursor)
 				local wt = font:GetTextWidth(txt)
-				if wt <= clientWidth or obj.offset >= obj.cursor then
+				if wt <= clientWidth or obj.offset >= cursor then
 					break
 				end
 				obj.offset = obj.offset + 1
 			until (false)
-      --// but also automatically always show the maximum amount of text (scroll left on deletion)
-      repeat
-        local txt = text:sub(obj.offset-1)
-        local wt = font:GetTextWidth(txt)
-        if wt > clientWidth or obj.offset < 1 then
-          break
-        end
-        obj.offset = obj.offset - 1
-      until (false)
+			--// but also automatically always show the maximum amount of text (scroll left on deletion)
+			repeat
+				local txt = text:sub(obj.offset-1)
+				local wt = font:GetTextWidth(txt)
+				if wt > clientWidth or obj.offset < 1 then
+					break
+				end
+				obj.offset = obj.offset - 1
+			until (false)
 		end
 
 		local txt = text:sub(obj.offset)
@@ -667,7 +675,7 @@ function DrawEditBox(obj)
 				local scrollPosY = obj.parent.scrollPosY
 				local scrollHeight = obj.parent.clientArea[4]
 
-				local h, d, numLines = font:GetTextHeight(obj.text);
+				local h, d, numLines = font:GetTextHeight(tostring(obj.text));
 				local minDrawY = scrollPosY - (h or 0)
 				local maxDrawY = scrollPosY + scrollHeight + (h or 0)
 
@@ -690,7 +698,7 @@ function DrawEditBox(obj)
 		end
 
 		if obj.state.focused and obj.editable then
-			local cursorTxt = text:sub(obj.offset, obj.cursor - 1)
+			local cursorTxt = text:sub(obj.offset, cursor - 1)
 			local cursorX = font:GetTextWidth(cursorTxt)
 
 			local dt = Spring.DiffTimers(Spring.GetTimer(), obj._interactedTime)
@@ -721,12 +729,12 @@ function DrawEditBox(obj)
 			gl.Color(cc[1], cc[2], cc[3], cc[4] * alpha)
 
             if obj.align == "left" then
-                gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawCursor, cursorX + clientX - 1, clientY, 3, clientHeight)
+			  gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawCursor, cursorX + clientX - 1, clientY, 3, clientHeight)
             elseif obj.align == "right" then
                 local texLen = font:GetTextWidth(text)
                 cursorX = obj:__GetStartX(text) + cursorX - clientX
                 gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawCursor, cursorX, clientY, 3, clientHeight)
-            end
+             end
 		end
         if obj.selStart and obj.state.focused then
 			local cc = obj.selectionColor
@@ -1011,22 +1019,26 @@ function DrawCheckbox(obj)
   else
     gl.Color(1,1,1,1)
   end
-  TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
 
-  local texInfo = gl.TextureInfo(obj.TileImageBK) or {xsize=1, ysize=1}
+  local imageBK = obj.round and obj.TileImageBK_round or obj.TileImageBK
+  TextureHandler.LoadTexture(0, imageBK, obj)
+
+  local texInfo = gl.TextureInfo(imageBK) or {xsize=1, ysize=1}
   local tw,th = texInfo.xsize, texInfo.ysize
     gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, x,y,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
   --gl.Texture(0,false)
 
   if (obj.state.checked) then
-    TextureHandler.LoadTexture(0,obj.TileImageFG,obj)
+    local imageFG = obj.round and obj.TileImageFG_round or obj.TileImageFG
+    TextureHandler.LoadTexture(0, imageFG, obj)
       gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, x,y,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
   end
   gl.Texture(0,false)
 
   gl.Color(1,1,1,1)
   if (obj.caption) then
-    _GetControlFont(obj):Print(obj.caption, tx, ty, nil, "center")
+    local font = _GetControlFont(obj)
+    font:Print(obj.caption, tx, ty - font.size*0.35, nil, obj.valign)
   end
 end
 
@@ -1034,6 +1046,8 @@ end
 --//
 
 function DrawProgressbar(obj)
+  local x = 0
+  local y = 0
   local w = obj.width
   local h = obj.height
 
@@ -1042,25 +1056,40 @@ function DrawProgressbar(obj)
   local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
   gl.Color(obj.backgroundColor)
-  TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
+  if not obj.noSkin then
+    TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
     local texInfo = gl.TextureInfo(obj.TileImageBK) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
 
     gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, 0,0,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
-  --gl.Texture(0,false)
+    --gl.Texture(0,false)
+  end
 
   gl.Color(obj.color)
   TextureHandler.LoadTexture(0,obj.TileImageFG,obj)
     local texInfo = gl.TextureInfo(obj.TileImageFG) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
 
-    gl.ClipPlane(1, -1,0,0, w*percent)
-    gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, 0,0,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
-    gl.ClipPlane(1, false)
+    -- workaround for catalyst >12.6 drivers: do the "clipping" by multiplying width by percentage in glBeginEnd instead of using glClipPlane
+    -- fuck AMD
+    --gl.ClipPlane(1, -1,0,0, x+w*percent)
+	if obj.fillPadding then
+		x, y = x + obj.fillPadding[1], y + obj.fillPadding[2]
+		w, h = w - (obj.fillPadding[1] + obj.fillPadding[3]), h - (obj.fillPadding[2] + obj.fillPadding[4])
+	end
+	
+    if (obj.orientation == "horizontal") then
+      gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, x,y,w*percent,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
+    else
+      gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, x,y + (h - h*percent),w,h*percent, skLeft,skTop,skRight,skBottom, tw,th, 0)
+    end
+
+    --gl.ClipPlane(1, false)
   gl.Texture(0,false)
 
   if (obj.caption) then
-    (_GetControlFont(obj)):Print(obj.caption, w*0.5, h*0.5, "center", "center")
+    local font = _GetControlFont(obj)
+    font:Print(obj.caption, x+w*0.5, y+h*0.5 - font.size*0.35 + (obj.fontOffset or 0), "center", "linecenter")
   end
 end
 
@@ -1076,13 +1105,15 @@ function DrawTrackbar(self)
   local pdLeft,pdTop,pdRight,pdBottom = unpack4(self.hitpadding)
 
   gl.Color(1,1,1,1)
-
-  TextureHandler.LoadTexture(0,self.TileImage,self)
+  if not self.noDrawBar then
+    TextureHandler.LoadTexture(0,self.TileImage,self)
     local texInfo = gl.TextureInfo(self.TileImage) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
     gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, 0,0,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
-
-  TextureHandler.LoadTexture(0,self.StepImage,self)
+  end
+    
+  if not self.noDrawStep then
+    TextureHandler.LoadTexture(0,self.StepImage,self)
     local texInfo = gl.TextureInfo(self.StepImage) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
 
@@ -1119,14 +1150,16 @@ function DrawTrackbar(self)
         mx = mx+stepWidth
       end
     end
+  end
 
   if (self.state.hovered) then
     gl.Color(self.focusColor)
   else
     gl.Color(1,1,1,1)
   end
-
-  TextureHandler.LoadTexture(0,self.ThumbImage,self)
+  
+  if not self.noDrawThumb then
+    TextureHandler.LoadTexture(0,self.ThumbImage,self)
     local texInfo = gl.TextureInfo(self.ThumbImage) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
 
@@ -1140,7 +1173,8 @@ function DrawTrackbar(self)
     mx = math.floor(mx - tw * 0.5)
     my = math.floor(my - th * 0.5)
     gl.TexRect(mx, my, mx + tw, my + th, false, true)
-
+  end
+  
   gl.Texture(0,false)
 end
 
@@ -1389,8 +1423,9 @@ function NCHitTestWithPadding(obj,mx,my)
   elseif (draggable) then
     return obj
   end
-  if obj.noClickThrough then
-      return obj
+
+  if obj.noClickThrough and not IsTweakMode() then
+    return obj
   end
 end
 
@@ -1433,8 +1468,9 @@ function WindowNCMouseDownPostChildren(obj,x,y)
     obj:StartDragging()
     return obj
   end
-  if obj.noClickThrough then
-      return obj
+
+  if obj.noClickThrough and not IsTweakMode() then
+    return obj
   end
 end
 

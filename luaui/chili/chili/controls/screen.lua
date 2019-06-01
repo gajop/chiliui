@@ -41,12 +41,13 @@ local inherited = this.inherited
 --//=============================================================================
 
 function Screen:New(obj)
-  local vsx,vsy = gl.GetViewSizes()
+  local vsx,vsy = Spring.GetViewSizes()
+  
   if ((obj.width or -1) <= 0) then
     obj.width = vsx
   end
   if ((obj.height or -1) <= 0) then
-    obj.height = vsy
+    obj.height = math.ceil(vsy)
   end
 
   obj = inherited.New(self,obj)
@@ -105,6 +106,10 @@ function Screen:ScreenToClient(x,y)
 end
 
 
+function Screen:UnscaledClientToScreen(x,y)
+  return x*WG.uiScale, y*WG.uiScale
+end
+
 function Screen:ClientToScreen(x,y)
   return x, y
 end
@@ -126,8 +131,8 @@ end
 --//=============================================================================
 
 function Screen:Resize(w,h)
-	self.width = w
-	self.height = h
+	self.width = math.ceil(w)
+	self.height = math.ceil(h)
 	self:CallChildren("RequestRealign")
 end
 
@@ -140,10 +145,8 @@ function Screen:Update(...)
 	local hoveredControl = UnlinkSafe(self.hoveredControl)
 	local activeControl = UnlinkSafe(self.activeControl)
 	if hoveredControl and (not activeControl) then
-		local x, y = Spring.GetMouseState()
-		if math.abs(x - self.width/2) <= 1 and math.abs(y - self.height/2) <= 1 then
-			-- Do not register a hit if the mouse is not hovered over Spring
-			-- See https://springrts.com/mantis/view.php?id=5311
+		local x, y, _, _, _, outsideSpring = Spring.GetMouseState()
+		if outsideSpring then
 			if self.currentTooltip then
 				self.currentTooltip = nil
 			end
@@ -157,7 +160,7 @@ function Screen:Update(...)
 			end
 			return
 		end
-		y = select(2,gl.GetViewSizes()) - y
+		y = select(2,Spring.GetViewSizes()) - y
 		local cx,cy = hoveredControl:ScreenToLocal(x, y)
 		hoveredControl:MouseMove(cx, cy, 0, 0)
 	end
@@ -165,12 +168,20 @@ end
 
 
 function Screen:IsAbove(x,y,...)
-  if math.abs(x - self.width/2) <= 1 and math.abs(y - self.height/2) <= 1 then
-    -- Do not register a hit if the mouse is not hovered over Spring
-    -- See https://springrts.com/mantis/view.php?id=5311
+  if select(6, Spring.GetMouseState()) then
+    -- Do not register hits for offscreen mouse.
+    -- See https://springrts.com/mantis/view.php?id=5671 for the good solution.
     return
   end
-  y = select(2,gl.GetViewSizes()) - y
+  -- What is this for?
+  
+  local activeControl = UnlinkSafe(self.activeControl)
+  if activeControl then
+    self.currentTooltip = activeControl.tooltip
+    return true
+  end
+
+  y = select(2,Spring.GetViewSizes()) - y
   local hoveredControl = inherited.IsAbove(self,x,y,...)
 
   --// tooltip
@@ -203,28 +214,26 @@ end
 
 function Screen:FocusControl(control)
   --UnlinkSafe(self.activeControl)
-  if CompareLinks(control, self.focusedControl) then
-    return
-  end
-
-  local focusedControl = UnlinkSafe(self.focusedControl)
-  if focusedControl then
-    focusedControl.state.focused = false
-    focusedControl:FocusUpdate() --rename FocusLost()
-  end
-  self.focusedControl = nil
-  if control then
-    self.focusedControl = MakeWeakLink(control, self.focusedControl)
-    self.focusedControl.state.focused = true
-    if self.focusedControl.hidden then
-      self.focusedControl:Show()
-    end
-    self.focusedControl:FocusUpdate() --rename FocusGain()
+  if not CompareLinks(control, self.focusedControl) then
+      local focusedControl = UnlinkSafe(self.focusedControl)
+      if focusedControl then
+          focusedControl.state.focused = false
+          focusedControl:FocusUpdate() --rename FocusLost()
+      end
+      self.focusedControl = nil
+      if control then
+          self.focusedControl = MakeWeakLink(control, self.focusedControl)
+          self.focusedControl.state.focused = true
+          if self.focusedControl.hidden then
+            self.focusedControl:Show()
+          end
+          self.focusedControl:FocusUpdate() --rename FocusGain()
+      end
   end
 end
 
 function Screen:MouseDown(x,y,btn,...)
-  y = select(2,gl.GetViewSizes()) - y
+  y = select(2,Spring.GetViewSizes()) - y
 
   local activeControl = inherited.MouseDown(self,x,y,btn,...)
   local oldActiveControl = UnlinkSafe(self.activeControl)
@@ -240,7 +249,7 @@ end
 
 
 function Screen:MouseUp(x,y,...)
-  y = select(2,gl.GetViewSizes()) - y
+  y = select(2,Spring.GetViewSizes()) - y
 
   local activeControl = UnlinkSafe(self.activeControl)
   if activeControl then
@@ -276,10 +285,11 @@ end
 
 
 function Screen:MouseMove(x,y,dx,dy,...)
-  y = select(2,gl.GetViewSizes()) - y
+  y = select(2,Spring.GetViewSizes()) - y
   local activeControl = UnlinkSafe(self.activeControl)
   if activeControl then
     local cx,cy = activeControl:ScreenToLocal(x,y)
+	local sx, sy = activeControl:LocalToScreen(cx,cy)
     local obj = activeControl:MouseMove(cx,cy,dx,-dy,...)
     if (obj==false) then
       self.activeControl = nil
@@ -296,12 +306,13 @@ end
 
 
 function Screen:MouseWheel(x,y,...)
-  y = select(2,gl.GetViewSizes()) - y
+  y = select(2,Spring.GetViewSizes()) - y
   local activeControl = UnlinkSafe(self.activeControl)
   if activeControl then
     local cx,cy = activeControl:ScreenToLocal(x,y)
     local obj = activeControl:MouseWheel(cx,cy,...)
     if not obj then
+      self.activeControl = nil
       return false
     elseif obj ~= activeControl then
       self.activeControl = MakeWeakLink(obj, self.activeControl)
@@ -333,4 +344,11 @@ function Screen:TextInput(...)
 end
 
 
+function Screen:TextEditing(...)
+        local focusedControl = UnlinkSafe(self.focusedControl)
+        if focusedControl then
+                return (not not focusedControl:TextEditing(...))
+        end
+        return (not not inherited:TextEditing(...))
+end
 --//=============================================================================

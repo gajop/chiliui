@@ -41,7 +41,11 @@ EditBox = Control:Inherit{
   editable = true,
   selectable = true,
   multiline = false,
+  agressiveMaxLines = false,
+  agressiveMaxLinesPreserve = false,
   subTooltips = false,
+  useIME = true, -- Disabling is broken, so every text box is set to use IME.
+  useSDLStartTextInput = true,
 
   passwordInput = false,
   lines = {},
@@ -98,17 +102,29 @@ end
 
 --//=============================================================================
 
-local function explode(div,str) -- credit: http://richard.warburton.it
-  if (div=='') then return false end
-  local pos,arr = 0,{}
-  -- for each divider found
-  for st,sp in function() return string.find(str,div,pos,true) end do
-    table.insert(arr,string.sub(str,pos,st-1)) -- Attach chars left of current divider
-    pos = sp + 1 -- Jump past current divider
-  end
-  table.insert(arr,string.sub(str,pos)) -- Attach chars right of last divider
-  return arr
-end
+local function explode(div, str)
+	str = tostring(str)
+	local arr = {}
+	local i, j = 1, 1
+	local N = str:len()
+
+	while j <= N do
+		local c = str:sub(j, j)
+		if c == '\255' then
+			j = j + 3
+		elseif c == div then
+			arr[#arr + 1] = str:sub(i, j - 1)
+			i = j + 1
+		end
+		j = j + 1
+	end
+
+	if i <= N then
+		arr[#arr + 1] = str:sub(i, N)
+	end
+
+	return arr
+ end
 
 --- Sets the EditBox text
 -- @string newtext text to be set
@@ -137,7 +153,7 @@ function EditBox:_LineLog2Phys(logicalLine, pos)
 		for _, plID in pairs(logicalLine.pls) do
 			local pl = self.physicalLines[plID]
 			py = plID
-			px  = px + #pl.colorPrefix
+			px = px + #pl.colorPrefix
 			if #pl.text + 1 >= px or plID == #logicalLine.pls then
 				break
 			end
@@ -296,6 +312,48 @@ end
 
 -- will automatically wrap into multiple lines if too long
 function EditBox:AddLine(text, tooltips, OnTextClick)
+	if self.agressiveMaxLines and #self.lines > self.agressiveMaxLines then
+		local preserve = {}
+		for i = math.max(1, #self.lines - self.agressiveMaxLinesPreserve), #self.lines do
+			preserve[#preserve + 1] = {self.lines[i].text, self.lines[i].tooltips, self.lines[i].OnTextClick}
+		end
+		self.lines = {}
+		self.physicalLines = {}
+		
+		self.forgetMouseMove = true
+		self.selStart = nil
+		self.selStartY = nil
+		self.selEnd = nil
+		self.selEndY = nil
+		
+		for i = 1, #preserve do
+			local line = {
+				text = preserve[i][1],
+				tooltips = preserve[i][2],
+				OnTextClick = preserve[i][3],
+				pls = {}, -- indexes of physical lines
+			}
+			table.insert(self.lines, line)
+			local lineID = #self.lines
+			self:_GeneratePhysicalLines(lineID)
+		end
+		
+		local line = {
+			text = text,
+			tooltips = tooltips,
+			OnTextClick = OnTextClick,
+			pls = {}, -- indexes of physical lines
+		}
+		table.insert(self.lines, line)
+		local lineID = #self.lines
+		self:_GeneratePhysicalLines(lineID)
+		
+		self._inRequestUpdate = true
+		self:RequestUpdate()
+		self:Invalidate()
+		return
+	end
+	
 	-- add logical line
 	local line = {
 		text = text,
@@ -349,7 +407,7 @@ function EditBox:UpdateLayout()
 --
 -- 	self:SetText(txt)
 --   end
-  local font = self.font
+	local font = self.font
 	if self.multiline then
 		if self._inRequestUpdate then
 			self._inRequestUpdate = false
@@ -428,6 +486,21 @@ end
 function EditBox:__GetStartX(text)
     local texLen = self.font:GetTextWidth(text)
     return math.max(self.padding[1], self.width - texLen - self.padding[3])
+end
+
+function EditBox:FocusUpdate(...)
+	if Spring.SDLStartTextInput and self.useSDLStartTextInput then
+		if not self.state.focused then
+			self.textEditing = ""
+			Spring.SDLStopTextInput()
+		else
+			Spring.SDLStartTextInput()
+			local x, y = self:CorrectlyImplementedLocalToScreen(self.x, self.y)
+			Spring.SDLSetTextInputRect(x, y, 30, 1000)
+		end
+	end
+	self:InvalidateSelf()
+	return inherited.FocusUpdate(self, ...)
 end
 
 function EditBox:_GetCursorByMousePos(x, y)
@@ -546,6 +619,7 @@ end
 
 
 function EditBox:MouseDown(x, y, ...)
+	self.forgetMouseMove = nil
 	-- FIXME: didn't feel like reimplementing Screen:MouseDown to capture MouseClick correctly, so clicking on text items is triggered in MouseDown
 	-- handle clicking on text items
 	local retVal = self:_GetCursorByMousePos(x, y)
@@ -617,6 +691,10 @@ function EditBox:MouseMove(x, y, dx, dy, button)
 		return inherited.MouseMove(self, x, y, dx, dy, button)
 	end
 
+	if self.forgetMouseMove then
+		return self
+	end
+	
 	local _, _, _, shift = Spring.GetModKeyState()
 	local cp, cpy = self.cursor, self.cursorY
 	self:_SetCursorByMousePos(x, y)
@@ -654,7 +732,9 @@ function EditBox:ClearSelected()
 		self.text, self.cursor = Utf8BackspaceAt(self.text, self.cursor)
 	end
 	self.selStart = nil
+	self.selStartY = nil
 	self.selEnd = nil
+	self.selEndY = nil
 	self:Invalidate()
 end
 
@@ -758,7 +838,7 @@ function EditBox:KeyPress(key, mods, isRepeat, label, unicode, ...)
 				self.cursor = Utf8PrevChar(txt, self.cursor)
 			until self.cursor == 1 or (txt:sub(self.cursor-1, self.cursor-1) ~= " " and txt:sub(self.cursor, self.cursor) == " ")
 		else
-		self.cursor = Utf8PrevChar(txt, cp)
+			self.cursor = Utf8PrevChar(txt, cp)
 		end
 	elseif key == Spring.GetKeyCode("right") and not self.multiline then
 		if mods.ctrl then
@@ -766,7 +846,7 @@ function EditBox:KeyPress(key, mods, isRepeat, label, unicode, ...)
 				self.cursor = Utf8NextChar(txt, self.cursor)
 			until self.cursor >= #txt-1 or (txt:sub(self.cursor-1, self.cursor-1) == " " and txt:sub(self.cursor, self.cursor) ~= " ")
 		else
-		self.cursor = Utf8NextChar(txt, cp)
+			self.cursor = Utf8NextChar(txt, cp)
 		end
 	elseif key == Spring.GetKeyCode("home") and not self.multiline then
 		self.cursor = 1
@@ -806,7 +886,9 @@ function EditBox:KeyPress(key, mods, isRepeat, label, unicode, ...)
 			self:_SetSelection(nil, nil, self.cursor, self.cursorY)
 		elseif self.selStart then
 			self.selStart = nil
+			self.selStartY = nil
 			self.selEnd = nil
+			self.selEndY = nil
 		end
 	end
 
@@ -823,6 +905,7 @@ function EditBox:TextInput(utf8char, ...)
 	if not self.editable then
 		return false
 	end
+    self.textEditing = ""
 	local unicode = utf8char
 
 	if unicode then
@@ -843,6 +926,15 @@ function EditBox:TextInput(utf8char, ...)
 	self:UpdateLayout()
 	self:Invalidate()
 	return self
+end
+
+function EditBox:TextEditing(utf8, start, length)
+    if not self.editable then
+        return false
+    end
+
+    self.textEditing = utf8
+    return true
 end
 
 --//=============================================================================

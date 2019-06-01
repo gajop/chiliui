@@ -49,6 +49,7 @@ Object = {
   OnMouseOut      = {},
   OnKeyPress      = {},
   OnTextInput     = {},
+  OnTextEditing   = {},
   OnFocusUpdate   = {},
   OnHide          = {},
   OnShow          = {},
@@ -115,7 +116,7 @@ function Object:New(obj)
           ot = "table";
         end
         if (ot ~= "table")and(ot ~= "metatable") then
-          Spring.Log("Chili", "error", obj.name .. ": Wrong param type given to " .. i .. ": got " .. ot .. " expected table.")
+          Spring.Echo("Chili: " .. obj.name .. ": Wrong param type given to " .. i .. ": got " .. ot .. " expected table.")
           obj[i] = {}
         end
 
@@ -123,9 +124,8 @@ function Object:New(obj)
         if (t=="metatable") then
           setmetatable(obj[i], getmetatable(v))
         end
-      -- We don't need to copy other types
-    --   elseif (ot == "nil") then
-    --       obj[i] = v
+      elseif (ot == "nil") then
+        obj[i] = v
       end
     end
   end
@@ -161,39 +161,38 @@ end
 -- TODO: use scream, in case the user forgets.
 -- nil -> nil
 function Object:Dispose(_internal)
-  if self.disposed then
-    return
-  end
+  if (not self.disposed) then
 
-  --// check if the control is still referenced (if so it would indicate a bug in chili's gc)
-  if _internal then
-    if self._hlinks and next(self._hlinks) then
-      local hlinks_cnt = table.size(self._hlinks)
-      local i,v = next(self._hlinks)
-      if hlinks_cnt > 1 or (v ~= self) then --// check if user called Dispose() directly
-        Spring.Log("Chili", "error", ("Tried to dispose \"%s\"! It's still referenced %i times!"):format(self.name, hlinks_cnt))
+    --// check if the control is still referenced (if so it would indicate a bug in chili's gc)
+    if _internal then
+      if self._hlinks and next(self._hlinks) then
+        local hlinks_cnt = table.size(self._hlinks)
+        local i,v = next(self._hlinks)
+        if hlinks_cnt > 1 or (v ~= self) then --// check if user called Dispose() directly
+          Spring.Echo(("Chili: tried to dispose \"%s\"! It's still referenced %i times!"):format(self.name, hlinks_cnt))
+        end
       end
     end
-  end
 
-  if self.state and self.state.focused then
-    local screenCtrl = self:FindParent("screen")
-    if screenCtrl then
-      screenCtrl:FocusControl(nil)
+    if self.state and self.state.focused then
+      local screenCtrl = self:FindParent("screen")
+      if screenCtrl then
+        screenCtrl:FocusControl(nil)
+      end
     end
+    self:CallListeners(self.OnDispose)
+
+    self.disposed = true
+
+    TaskHandler.RemoveObject(self)
+    --DebugHandler:UnregisterObject(self) --// not needed
+
+    if (UnlinkSafe(self.parent)) then
+      self.parent:RemoveChild(self)
+    end
+    self:SetParent(nil)
+    self:ClearChildren()
   end
-
-  self:CallListeners(self.OnDispose)
-  self.disposed = true
-
-  TaskHandler.RemoveObject(self)
-  --DebugHandler:UnregisterObject(self) --// not needed
-
-  if UnlinkSafe(self.parent) then
-    self.parent:RemoveChild(self)
-  end
-  self:SetParent(nil)
-  self:ClearChildren()
 end
 
 
@@ -213,7 +212,7 @@ function Object:Inherit(class)
   class.inherited = self
 
   for i,v in pairs(self) do
-    if (class[i] == nil) and (i ~= "inherited") and (i ~= "__lowerkeys") then
+    if (class[i] == nil)and(i ~= "inherited")and(i ~= "__lowerkeys") then
       t = type(v)
       if (t == "table") --[[or(t=="metatable")--]] then
         class[i] = table.shallowcopy(v)
@@ -226,7 +225,7 @@ function Object:Inherit(class)
   local __lowerkeys = {}
   class.__lowerkeys = __lowerkeys
   for i,v in pairs(class) do
-    if type(i) == "string" then
+    if (type(i)=="string") then
       __lowerkeys[i:lower()] = i
     end
   end
@@ -235,8 +234,8 @@ function Object:Inherit(class)
 
   --// backward compability with old DrawControl gl state (change was done with v2.1)
   local w = DebugHandler.GetWidgetOrigin()
-  if (w ~= widget) and (w ~= Chili) then
-    class._hasCustomDrawControl = true
+  if (w ~= widget)and(w ~= Chili) then
+	class._hasCustomDrawControl = true
   end
 
   return class
@@ -250,7 +249,7 @@ function Object:SetParent(obj)
   obj = UnlinkSafe(obj)
   local typ = type(obj)
 
-  if typ ~= "table" then
+  if (typ ~= "table") then
     self.parent = nil
     self:CallListeners(self.OnOrphan, self)
     return
@@ -272,11 +271,11 @@ end
 
 --- Adds the child object
 -- @tparam Object obj child object to be added
-function Object:AddChild(obj, dontUpdate)
+function Object:AddChild(obj, dontUpdate, index)
   local objDirect = UnlinkSafe(obj)
 
   if (self.children[objDirect]) then
-    Spring.Log("Chili", "error", ("Tried to add multiple times \"%s\" to \"%s\"!"):format(obj.name, self.name))
+    Spring.Echo(("Chili: tried to add multiple times \"%s\" to \"%s\"!"):format(obj.name, self.name))
     return
   end
 
@@ -296,11 +295,20 @@ function Object:AddChild(obj, dontUpdate)
   obj:SetParent(self)
 
   local children = self.children
-  local i = #children+1
-  children[i] = objDirect
-  children[hobj] = i
-  children[objDirect] = i
-  self:Invalidate()
+  if index and (index <= #children) then
+    for i,v in pairs(children) do -- remap hardlinks and objects
+      if type(v) == "number" and v >= index then
+        children[i] = v + 1
+      end
+    end
+    table.insert(children, index, objDirect)
+  else
+    local i = #children+1
+    children[i] = objDirect
+    children[hobj] = i
+    children[objDirect] = i
+  end
+    self:Invalidate()
 end
 
 
@@ -396,14 +404,14 @@ function Object:HideChild(obj)
 
   if (not self.children[objDirect]) then
     --if (self.debug) then
-      Spring.Log("Chili", "error", "Tried to hide a non-child (".. (obj.name or "") ..")")
+      Spring.Echo("Chili: tried to hide a non-child (".. (obj.name or "") ..")")
     --end
     return
   end
 
   if (self.children_hidden[objDirect]) then
     --if (self.debug) then
-      Spring.Log("Chili", "error", "Tried to hide the same child multiple times (".. (obj.name or "") ..")")
+      Spring.Echo("Chili: tried to hide the same child multiple times (".. (obj.name or "") ..")")
     --end
     return
   end
@@ -433,14 +441,14 @@ function Object:ShowChild(obj)
 
   if (not self.children_hidden[objDirect]) then
     --if (self.debug) then
-      Spring.Log("Chili", "error", "Tried to show a non-child (".. (obj.name or "") ..")")
+      Spring.Echo("Chili: tried to show a non-child (".. (obj.name or "") ..")")
     --end
     return
   end
 
   if (self.children[objDirect]) then
     --if (self.debug) then
-      Spring.Log("Chili", "error", "Tried to show the same child multiple times (".. (obj.name or "") ..")")
+      Spring.Echo("Chili: tried to show the same child multiple times (".. (obj.name or "") ..")")
     --end
     return
   end
@@ -472,8 +480,7 @@ function Object:SetVisibility(visible)
   if self.visible == visible then
     return
   end
-
-  if visible then
+  if (visible) then
     self.parent:ShowChild(self)
   else
     self.parent:HideChild(self)
@@ -497,12 +504,20 @@ end
 
 --- Hides the objects
 function Object:Hide()
+  local wasHidden = self.hidden
   self:SetVisibility(false)
+  if not wasHidden then
+    self:CallListeners(self.OnHide, self)
+  end
 end
 
 --- Makes the object visible
 function Object:Show()
+  local wasVisible = not self.hidden
   self:SetVisibility(true)
+  if not wasVisible then
+    self:CallListeners(self.OnShow, self)
+  end
 end
 
 --- Toggles object visibility
@@ -535,8 +550,8 @@ end
 
 
 function Object:SetLayer(layer)
-  if self.parent ~= nil then
-    self.parent:SetChildLayer(self, layer)
+  if (self.parent) then
+    (self.parent):SetChildLayer(self, layer)
   end
 end
 
@@ -551,7 +566,7 @@ end
 --//=============================================================================
 
 function Object:InheritsFrom(classname)
-  if self.classname == classname then
+  if (self.classname == classname) then
     return true
   elseif not self.inherited then
     return false
@@ -839,8 +854,16 @@ function Object:LocalToScreen(x,y)
   if (not self.parent) then
     return x,y
   end
-  --Spring.Echo((not self.parent) and debug.traceback())
   return (self.parent):ClientToScreen(self:LocalToParent(x,y))
+end
+
+
+function Object:UnscaledLocalToScreen(x,y)
+  if (not self.parent) then
+    return x,y
+  end
+  --Spring.Echo((not self.parent) and debug.traceback())
+  return (self.parent):UnscaledClientToScreen(self:LocalToParent(x,y))
 end
 
 
@@ -849,6 +872,14 @@ function Object:ClientToScreen(x,y)
     return self:ClientToParent(x,y)
   end
   return (self.parent):ClientToScreen(self:ClientToParent(x,y))
+end
+
+
+function Object:UnscaledClientToScreen(x,y)
+  if (not self.parent) then
+    return self:ClientToParent(x,y)
+  end
+  return (self.parent):UnscaledClientToScreen(self:ClientToParent(x,y))
 end
 
 
@@ -1001,6 +1032,15 @@ end
 
 function Object:TextInput(...)
   if (self:CallListeners(self.OnTextInput, ...)) then
+    return self
+  end
+
+  return false
+end
+
+
+function Object:TextEditing(...)
+  if (self:CallListeners(self.OnTextEditing, ...)) then
     return self
   end
 

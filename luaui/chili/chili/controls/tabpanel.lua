@@ -33,7 +33,7 @@ function TabPanel:New(obj)
 		tabs = obj.tabs,
 		x = 0,
 		y = 0,
-		width = "100%",
+		right = 0,
 		height = obj.barHeight,
 	}
 	if obj.scrollTabs then
@@ -88,10 +88,14 @@ function TabPanel:New(obj)
 end
 
 function TabPanel:AddTab(tab, neverSwitchTab)
-	local switchToTab = (#self.tabbar.children == 0) and not neverSwitchTab
-    self.tabbar:AddChild(
-        TabBarItem:New{name = tab.name, caption = tab.caption or tab.name, defaultWidth = self.tabbar.minItemWidth, defaultHeight = self.tabbar.minItemHeight} --FIXME: implement an "Add Tab in TabBar too"
-    )
+	local switchToTab = (#tabbar.children == 0) and not neverSwitchTab
+    self.tabbar:AddChild(TabBarItem:New {
+        name = tab.name,
+        tooltip = tab.tooltip,
+        caption = tab.caption or tab.name,
+        defaultWidth = self.tabbar.minItemWidth,
+        defaultHeight = self.tabbar.minItemHeight
+    }) --FIXME: implement an "Add Tab in TabBar too"
     local tabFrame = Control:New {
         padding = {0, 0, 0, 0},
         x = 0,

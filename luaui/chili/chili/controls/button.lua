@@ -10,6 +10,7 @@
 Button = Control:Inherit{
   classname= "button",
   caption  = 'button',
+  captionAlign  = nil,
   defaultWidth  = 70,
   defaultHeight = 20,
 
