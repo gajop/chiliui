@@ -1,34 +1,35 @@
---//=============================================================================
+--// ============================================================================= 
 
 TabBar = LayoutPanel:Inherit{
-  classname    = "tabbar",
-  orientation  = "horizontal",
-  resizeItems  = false,
-  centerItems  = false,
-  padding      = {0, 0, 0, 0},
-  itemPadding  = {0, 0, 0, 0},
-  itemMargin   = {0, 0, 0, 0},
-  minItemWidth  = 70,
-  minItemHeight = 20,
-  tabs         = {},
-  selected     = nil,
-  preserveChildrenOrder = true,
-  OnChange     = {},
+	classname    = "tabbar",
+	orientation  = "horizontal",
+	resizeItems  = false,
+	centerItems  = false,
+	padding      = {0, 0, 0, 0},
+	itemPadding  = {0, 0, 0, 0},
+	itemMargin   = {0, 0, 0, 0},
+	minItemWidth  = 70,
+	minItemHeight = 20,
+	tabs         = {},
+	selected     = nil,
+	preserveChildrenOrder = true,
+	OnChange     = {},
 }
 
 local this = TabBar
 local inherited = this.inherited
 
---//=============================================================================
+--// ============================================================================= 
 
 function TabBar:New(obj)
-	obj = inherited.New(self,obj)
+	obj = inherited.New(self, obj)
 	if (obj.tabs) then
-		for i=1,#obj.tabs do
+		for i = 1, #obj.tabs do
 			obj:AddChild(
-				TabBarItem:New{
+				TabBarItem:New {
 					name = obj.tabs[i].name,
 					caption = obj.tabs[i].caption or obj.tabs[i].name,
+					tooltip = obj.tabs[i].tooltip,
 					font = obj.tabs[i].font,
 					defaultWidth = obj.minItemWidth,
 					defaultHeight = obj.minItemHeight,
@@ -45,13 +46,13 @@ function TabBar:New(obj)
 	return obj
 end
 
---//=============================================================================
+--// ============================================================================= 
 
 function TabBar:SetOrientation(orientation)
-  inherited.SetOrientation(self,orientation)
+	inherited.SetOrientation(self, orientation)
 end
 
---//=============================================================================
+--// ============================================================================= 
 function TabBar:DisableHighlight()
 	for i = 1, #self.children do
 		local c = self.children[i]
@@ -122,4 +123,4 @@ function TabBar:Remove(tabname, updateSelection)
 
 	return false
 end
---//=============================================================================
+--// ============================================================================= 
