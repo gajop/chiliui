@@ -31,14 +31,9 @@ local tf
 --------------------------------------------------------------------------------
 -- Chili's location
 
-local function GetDirectory(filepath)
-	return filepath and filepath:gsub("(.*/)(.*)", "%1")
-end
-
-assert(debug)
-local source = debug and debug.getinfo(1).source
-local DIR = GetDirectory(source) or (LUA_DIRNAME .."Widgets/")
-CHILI_DIRNAME = DIR .. "chili/"
+CHILI_DIRNAME = "libs/chiliui/" .. LUA_DIRNAME .. "chili/chili/"
+SKIN_DIRNAME = LUA_DIRNAME .. "widgets/chili/skins/"
+THEME_DIRNAME = LUA_DIRNAME .. "widgets/chili/themes/"
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -73,13 +68,37 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+firstDraw = true
+local hideInterface = false
+local totalHideInterface = falase
+local function ShowInterface()
+	hideInterface = false
+end
+
 function widget:DrawScreen()
+	if firstDraw then
+		WG.Delay(ShowInterface, 0.1)
+		hideInterface = true
+		firstDraw = false
+	end
+	if totalHideInterface or (WG.Chobby and WG.Chobby.Configuration and WG.Chobby.Configuration.hideInterface) then
+		return
+	end
+
 	gl.Color(1,1,1,1)
 	if (not screen0:IsEmpty()) then
 		gl.PushMatrix()
 			local vsx,vsy = gl.GetViewSizes()
-			gl.Translate(0,vsy,0)
-			gl.Scale(1,-1,1)
+			if hideInterface then
+				gl.Translate(0,0,0)
+				gl.Scale(1,-1,1)
+			else
+				gl.Translate(0,vsy,0)
+				gl.Scale(1,-1,1)
+			end
+			if WG.uiScale then
+				gl.Scale(WG.uiScale,WG.uiScale,1)
+			end
 			screen0:Draw()
 		gl.PopMatrix()
 	end
@@ -88,6 +107,10 @@ end
 
 
 function widget:DrawLoadScreen()
+	if totalHideInterface or (WG.Chobby and WG.Chobby.Configuration and WG.Chobby.Configuration.hideInterface) then
+		return
+	end
+
 	gl.Color(1,1,1,1)
 	if (not screen0:IsEmpty()) then
 		gl.PushMatrix()
@@ -103,6 +126,10 @@ end
 
 
 function widget:TweakDrawScreen()
+	if totalHideInterface or (WG.Chobby and WG.Chobby.Configuration and WG.Chobby.Configuration.hideInterface) then
+		return
+	end
+
 	gl.Color(1,1,1,1)
 	if (not screen0:IsEmpty()) then
 		gl.PushMatrix()
@@ -117,6 +144,10 @@ end
 
 
 function widget:DrawGenesis()
+	if totalHideInterface or (WG.Chobby and WG.Chobby.Configuration and WG.Chobby.Configuration.hideInterface) then
+		return
+	end
+
 	gl.Color(1,1,1,1)
 	tf.Update()
 	th.Update()
@@ -126,7 +157,12 @@ end
 
 
 function widget:IsAbove(x,y)
-	if Spring.IsGUIHidden() then return false end
+	if Spring.IsGUIHidden() or totalHideInterface then
+		return false
+	end
+	if WG.uiScale and WG.uiScale ~= 1 then
+		x, y = x/WG.uiScale, y/WG.uiScale
+	end
 
 	return screen0:IsAbove(x,y)
 end
@@ -134,7 +170,12 @@ end
 
 local mods = {}
 function widget:MousePress(x,y,button)
-	if Spring.IsGUIHidden() then return false end
+	if Spring.IsGUIHidden() or totalHideInterface then
+		return false
+	end
+	if WG.uiScale and WG.uiScale ~= 1 then
+		x, y = x/WG.uiScale, y/WG.uiScale
+	end
 
 	local alt, ctrl, meta, shift = Spring.GetModKeyState()
 	mods.alt=alt; mods.ctrl=ctrl; mods.meta=meta; mods.shift=shift;
@@ -143,7 +184,12 @@ end
 
 
 function widget:MouseRelease(x,y,button)
-	if Spring.IsGUIHidden() then return false end
+	if Spring.IsGUIHidden() or totalHideInterface then
+		return false
+	end
+	if WG.uiScale and WG.uiScale ~= 1 then
+		x, y = x/WG.uiScale, y/WG.uiScale
+	end
 
 	local alt, ctrl, meta, shift = Spring.GetModKeyState()
 	mods.alt=alt; mods.ctrl=ctrl; mods.meta=meta; mods.shift=shift;
@@ -152,7 +198,12 @@ end
 
 
 function widget:MouseMove(x,y,dx,dy,button)
-	if Spring.IsGUIHidden() then return false end
+	if Spring.IsGUIHidden() or totalHideInterface then
+		return false
+	end
+	if WG.uiScale and WG.uiScale ~= 1 then
+		x, y, dx, dy = x/WG.uiScale, y/WG.uiScale, dx/WG.uiScale, dy/WG.uiScale
+	end
 
 	local alt, ctrl, meta, shift = Spring.GetModKeyState()
 	mods.alt=alt; mods.ctrl=ctrl; mods.meta=meta; mods.shift=shift;
@@ -161,7 +212,9 @@ end
 
 
 function widget:MouseWheel(up,value)
-	if Spring.IsGUIHidden() then return false end
+	if Spring.IsGUIHidden() or totalHideInterface then
+		return false
+	end
 
 	local x,y = Spring.GetMouseState()
 	local alt, ctrl, meta, shift = Spring.GetModKeyState()
@@ -172,7 +225,9 @@ end
 
 local keyPressed = true
 function widget:KeyPress(key, mods, isRepeat, label, unicode)
-	if Spring.IsGUIHidden() then return false end
+	if Spring.IsGUIHidden() or totalHideInterface then
+		return false
+	end
 
 	keyPressed = screen0:KeyPress(key, mods, isRepeat, label, unicode)
 	return keyPressed
@@ -180,7 +235,9 @@ end
 
 
 function widget:KeyRelease()
-	if Spring.IsGUIHidden() then return false end
+	if Spring.IsGUIHidden() or totalHideInterface then
+		return false
+	end
 
 	local _keyPressed = keyPressed
 	keyPressed = false
@@ -188,14 +245,43 @@ function widget:KeyRelease()
 end
 
 function widget:TextInput(utf8, ...)
-	if Spring.IsGUIHidden() then return false end
+	if Spring.IsGUIHidden() or totalHideInterface then
+		return false
+	end
 
 	return screen0:TextInput(utf8, ...)
 end
 
+function widget:TextEditing(utf8, start, length, ...)
+	if Spring.IsGUIHidden() or totalHideInterface then
+		return false
+	end
 
+	return screen0:TextEditing(utf8, start, length, ...)
+end
+
+
+local oldSizeX, oldSizeY
 function widget:ViewResize(vsx, vsy)
-	screen0:Resize(vsx, vsy)
+	if totalHideInterface then
+		return
+	end
+	local ssx, ssy = vsx/(WG.uiScale or 1), vsy/(WG.uiScale or 1)
+	if oldSizeX ~= vsx or oldSizeY ~= vsy then
+		oldSizeX, oldSizeY = vsx, vsy
+		screen0:Resize(ssx, ssy)
+	end
+end
+
+function widget:Update()
+	totalHideInterface = WG.CheckTotalHideInterface and WG.CheckTotalHideInterface()
+	if totalHideInterface then
+		return
+	end
+	local screenWidth, screenHeight = gl.GetViewSizes()
+	if screenWidth ~= oldSizeX or screenHeight ~= oldSizeY then
+		widget:ViewResize(screenWidth, screenHeight)
+	end
 end
 
 widget.TweakIsAbove      = widget.IsAbove
